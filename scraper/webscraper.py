@@ -13,6 +13,8 @@ import requests
 import json
 import mysql.connector
 from mysql.connector import Error
+from mysql.connector import errorcode
+from login import host, database, user, password
 
 
 def site_init(url):
@@ -184,7 +186,7 @@ def extract_texan_vintage(model_names, beds, baths, prices, waitlist, available_
 
 
 def extract_riowest(model_names, beds, baths, prices, waitlist, available_units, sq_feet, deposits, links, apt):
-    url = 'https://www.rioweststudentliving.com/austin-austin-texas/rio-west-new-rio-west-student-apartments/'
+    url = 'https://www.rioweststudentliving.com/austin-austin-texas/rio-west-rio-west-student-apartments/'
     site_init(url)
     models = driver.find_elements_by_class_name("fp-group-list")
     for i in range(len(models)):
@@ -327,8 +329,53 @@ def extract_21rio(model_names, plans, prices):
         next_page.click()
 
 
+def connect():
+
+    connection = None
+    try:
+        connection = mysql.connector.connect(host=host, database=database, user=user, password=password)
+        if connection.is_connected():
+            print('Connected to MySQL database')
+        mySql_insert_query = """INSERT INTO apartment_data (Name, Beds, Baths, Price, Deposits, Waitlist, Available_Units, Size, Link, Apartment) 
+                           VALUES 
+                           ('Test3', 2, 2, '$999', 0, 0, 5, '500', 'https://www.yahoo.com', 'castilian') """
+        cursor = connection.cursor()
+        cursor.execute(mySql_insert_query)
+        connection.commit()
+        print(cursor.rowcount, "Record inserted successfully into Apartment table")
+        cursor.close()
+
+    except Error as e:
+        print(e)
+
+    finally:
+        if connection is not None and connection.is_connected():
+            connection.close()
+            print('Closed')
+
+
+# def insert(model_names, beds, baths, prices, waitlist, available_units, sq_feet, deposits, links, apt):
+#
+
+
+#     for i in range(len(model_names)):
+#         name = model_names[i]
+#         bed = beds[i]
+#         bath = baths[i]
+#         price = prices[i]
+#         wait = waitlist[i]
+#         unit = available_units[i]
+#         size = sq_feet[i]
+#         dep = deposits[i]
+#         link = links[i]
+#         apartment = apt[i]
+#         args = (name, bed, bath, price, wait, unit, size, dep, link, apartment)
+#         cursor = connection.cursor()
+#         query = "INSERT INTO apartments_data(names, beds, baths, price, waitlist, available_units, sq_feet, link, apartment_name_id)" \
+#         "VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+
+
 options = webdriver.ChromeOptions()
-options.add_argument('headless')
 driver = webdriver.Chrome("/mnt/c/Program Files (x86)/Google/Chrome/Application/chromedriver.exe")
 model_names = []
 beds = []
@@ -340,21 +387,47 @@ available_units = []
 sq_feet = []
 links = []
 deposits = []
-extract_26west(model_names, beds, baths, prices, waitlist, available_units, sq_feet, deposits, links, apt)
-extract_blockonpearl(model_names, beds, baths, prices, waitlist, available_units, sq_feet, deposits, links, apt)
-extract_crestatpearl(model_names, beds, baths, prices, waitlist, available_units, sq_feet, deposits, links, apt)
-extract_callaway(model_names, beds, baths, prices, waitlist, available_units, sq_feet, deposits, links, apt)
-extract_castilian(model_names, beds, baths, prices, waitlist, available_units, sq_feet, deposits, links, apt)
-extract_texan_vintage(model_names, beds, baths, prices, waitlist, available_units, sq_feet, deposits, links, apt)
-extract_riowest(model_names, beds, baths, prices, waitlist, available_units, sq_feet, deposits, links, apt)
-extract_skyloft(model_names, beds, baths, prices, waitlist, available_units, sq_feet, deposits, links, apt)
-extract_twentytwo15(model_names, beds, baths, prices, waitlist, available_units, sq_feet, deposits, links, apt)
-driver.close()
+#extract_26west(model_names, beds, baths, prices, waitlist, available_units, sq_feet, deposits, links, apt)
+#extract_blockonpearl(model_names, beds, baths, prices, waitlist, available_units, sq_feet, deposits, links, apt)
+#extract_crestatpearl(model_names, beds, baths, prices, waitlist, available_units, sq_feet, deposits, links, apt)
+#extract_callaway(model_names, beds, baths, prices, waitlist, available_units, sq_feet, deposits, links, apt)
+#extract_castilian(model_names, beds, baths, prices, waitlist, available_units, sq_feet, deposits, links, apt)
+#extract_texan_vintage(model_names, beds, baths, prices, waitlist, available_units, sq_feet, deposits, links, apt)
+#extract_riowest(model_names, beds, baths, prices, waitlist, available_units, sq_feet, deposits, links, apt)
+#extract_skyloft(model_names, beds, baths, prices, waitlist, available_units, sq_feet, deposits, links, apt)
+#extract_twentytwo15(model_names, beds, baths, prices, waitlist, available_units, sq_feet, deposits, links, apt)
+#driver.close()
+connect()
+# try:
+#     connection = mysql.connector.connect(host='localhost',
+#                                          database='apartments',
+#                                          user='root',
+#                                          password='password')
+#     mySql_insert_query = """CREATE TABLE Apartments (
+#                             Name varchar(255),
+#                             Beds int,
+#                             Baths int,
+#                             Price double,
+#                             Deposits int,
+#                             Waitlist int,
+#                             Available Units int,
+#                             Size int,
+#                             Link varchar(255)
+#                         );"""
+#
 
+#
+# except mysql.connector.Error as error:
+#     print("Failed to insert record into Laptop table {}".format(error))
+#
+# finally:
+#     if connection.is_connected():
+#         connection.close()
+#         print("MySQL connection is closed")
 
-df = pd.DataFrame({'Name': model_names, 'Beds': beds, 'Baths': baths, 'Price:': prices, 'Deposit': deposits,
-                   'Waitlist': waitlist, 'Available Units': available_units, 'Size (sq feet)': sq_feet, 'Link': links, 'Apartment': apt})
-df.to_csv('apartments.csv', index=False, encoding='utf-8')
+#df = pd.DataFrame({'Name': model_names, 'Beds': beds, 'Baths': baths, 'Price:': prices, 'Deposit': deposits,
+#                   'Waitlist': waitlist, 'Available Units': available_units, 'Size (sq feet)': sq_feet, 'Link': links, 'Apartment': apt})
+#df.to_csv('apartments.csv', index=False, encoding='utf-8')
 
 
 
