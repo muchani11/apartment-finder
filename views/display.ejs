@@ -1,13 +1,44 @@
 <!DOCTYPE html>
 <html lang="en-US">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="/css/styles.css" rel="stylesheet" type="text/css">
+      <nav class="navbar navbar-expand-md navbar-light bg-light">
+        <a class="navbar-brand" href="#">Navbar</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <!-- <li class="nav-item active">
+                    <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                </li> -->
+                <li class="nav-item">
+                  <a class="nav-link" href="/favorites.html">Favorites</a>
+              </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Furniture</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Find Roommates</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Contact Us</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
     <body>
 
-      <div class="container">
+      <div class="container-display">
         <div class="row">
           <div class="col-lg-12">
             <div class="button-group">
@@ -88,25 +119,76 @@
           </div>
         </div>
         <button id="submit" onclick="getData()">Search</button>
-      </div>
 
+        <select name="options-sort" id="sort">
+          <option value="beds-sort">Beds (ascending)</option>
+          <option value="baths-sort">Baths (ascending)</option>
+          <option value="price-sort">Price (ascending)</option>
+          <option value="size-sort">Size (ascending)</option>
+        </select>
+
+        <button id="init-sort" onclick="sortData()">Sort Items</button>
+      </div>
+      
 
       <div class="container-cards">
             <div class="card-deck">
+              <% if (data.length === 0) { %>
+                <p>No results were found for the specific search.</p>
+              <% } %>
               <% for(var i=0; i<data.length; i++) {%>
                 <div class="col-md-4">
+                    <p class="aptName"><%= data[i].Apartment %></p>
                     <div class="card mb-5" style="min-height:30rem; max-height:30rem;">
-                      <img class="card-img-top" src="<%= data[i].Image %>" alt="<%= data[i].Name %>" onclick="displayFull()">
+                      <div class="icons">
+                        <img class="card-img-top" src="<%= data[i].Image %>" alt="<%= data[i].Name %>" onclick="displayFull('<%= data[i].Image %>', '<%= data[i].Name %>')" title="Click to enlarge">
+                        <div>
+                          <i id="favorite" class="heart fa fa-heart-o" title="Favorite this Unit" name="<%= data[i].Name %>" apt="<%= data[i].Apartment %>" beds="<%= data[i].Beds %>" baths="<%= data[i].Baths%>"
+                            data-toggle="modal" data-target="#favoriteModal" data-backdrop="false"></i>
+                        </div>
+                      </div>
                       <div class="card-body">
                         <h5 class="card-title"><%= data[i].Name %></h5>
-                        <% if (data[i].Price === '') { %>
+                        <% if (data[i].MinPrice === 0) { %>
                           <h6>Price not listed</h6>
                         <% } %>
-                        <% if (data[i].Price !== '') { %>
-                          <h6><strong><%= data[i].Price %></strong>/mo</h6>
+                        <% if (data[i].MinPrice !== 0 && (data[i].MinPrice === data[i].MaxPrice)) { %>
+                          <h6><strong>$<%= data[i].MinPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") %></strong>/mo</h6>
                         <% } %>
-                        <p class="card-text"><strong><%= data[i].Beds %></strong> bd &nbsp;|&nbsp; 
-                          <strong><%= data[i].Baths %></strong> ba &nbsp;|&nbsp; <strong><%= data[i].Size %></strong> sqft</p>
+                        <% if (data[i].MinPrice !== 0 && (data[i].MinPrice !== data[i].MaxPrice)) { %>
+                          <h6>
+                            <strong>
+                              $<%= data[i].MinPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") %> - 
+                              $<%= data[i].MaxPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") %>
+                            </strong>/mo
+                          </h6>
+                        <% } %>
+                        <p class="card-text">
+                          <% if (data[i].Beds === 0) { %>
+                          <strong>Studio</strong> bd &nbsp;|&nbsp; 
+                          <% } %>
+
+                          <% if (data[i].Beds !== 0) { %>
+                            <strong><%= data[i].Beds %></strong> bd &nbsp;|&nbsp; 
+                          <% } %>
+
+                          <strong><%= data[i].Baths %></strong> ba &nbsp;|&nbsp;
+
+                          <% if (data[i].MinSize === 0) { %>
+                            <strong>Unlisted</strong> sqft
+                          <% } %>
+
+                          <% if (data[i].MinSize !== 0 && data[i].MinSize === data[i].MaxSize) { %>
+                            <strong><%= data[i].MinSize.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") %></strong> sqft
+                          <% } %>
+
+                          <% if (data[i].MinSize !== 0 && data[i].MinSize !== data[i].MaxSize) { %>
+                            <strong>
+                              <%= data[i].MinSize.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") %> - 
+                              <%= data[i].MaxSize.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") %>
+                            </strong> sqft
+                          <% } %>
+                        </p>
                         
                           <% if(data[i].Waitlist !== 0){ %>
                             <span class="availabilityText" style="background-color:indianred;font-weight: normal;">
@@ -146,127 +228,62 @@
               
             </div>
         </div>
+
+      <div class="notice">
+        <div id="favoriteModal" class="modal fade" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title"><b>Unit added to favorites</b></h5>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <p style="font-size:15px">Visit the favorites page to view this unit. All favorites are saved to browser cookies and local storage.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">Accept & Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>
+
+
+      <div class="display-pagination">
+        <div class="pagination">
+         <% if (currentPage == 1 && pages > 1) { %> 
+          <a href="<%= path %>/<%= parseInt(currentPage) + 1 %>">
+            <span>
+             Page <%=  parseInt(currentPage) + 1 %>
+             <i class="icon ion-ios-arrow-forward"></i>
+            </span>
+          </a>
+        <% } else if (currentPage < pages) { %>
+         <a href="<%= path %>/<%= parseInt(currentPage) - 1 %>">
+           <span>
+             <i class="icon ion-ios-arrow-back"></i>
+             Page <%= parseInt(currentPage) - 1 %>
+           </span>
+         </a>
+         <a href="<%= path %>/<%= parseInt(currentPage) + 1 %>">
+           <span>
+            Page <%= parseInt(currentPage) + 1 %>
+            <i class="icon ion-ios-arrow-forward"></i>
+           </span>
+         </a>
+       <% } else if (currentPage == pages && pages > 1) { %>
+        <a href="<%= path %>/<%= parseInt(currentPage) - 1 %>">
+          <span>
+           <i class="icon ion-ios-arrow-back"></i>Page 
+           <%=parseInt(currentPage) - 1 %>
+          </span>
+        </a>
+         <% } %>
+        </div>
+       </div>
     </body>
-    <script>
-      function getData() {
-  var beds = [];
-  var baths = [];
-  var prices = [];
-  var sizes = [];
-  var names = [];
-  $("input:checkbox[name=beds]:checked").each(function(){
-    beds.push($(this).parent().text().trim());
-});
 
-$("input:checkbox[name=baths]:checked").each(function(){
-    baths.push($(this).parent().text().trim());
-});
 
-$("input:checkbox[name=prices]:checked").each(function(){
-    prices.push($(this).parent().text().trim());
-});
-
-$("input:checkbox[name=sizes]:checked").each(function(){
-    sizes.push($(this).parent().text().trim());
-});
-
-$("input:checkbox[name=names]:checked").each(function(){
-    names.push($(this).parent().text().trim());
-});
-
-var url = assembleURL(beds, baths, prices, sizes, names);
-
-  $.ajax({
-    url: url,
-    type: 'GET',
-    dataType: 'json',
-    success: function(res) {
-    }
-});
-
-window.location.href = url;
-}
-
-function assembleURL(beds, baths, prices, sizes, names) {
-  var bedData = "[";
-  var bathData = "[";
-  var priceData = "[";
-  var sizeData = "[";
-  var nameData = "[";
-
-  for (let i = 0; i < beds.length; ++i) {
-    bedData += beds[i];
-    if (i !== (beds.length-1)){
-      bedData += ',';
-    }
-  }
-
-  for (let i = 0; i < baths.length; ++i) {
-    bathData += baths[i];
-    if (i !== (baths.length-1)){
-      bathData += ',';
-    }
-  }
-
-  for (let i = 0; i < prices.length; ++i) {
-    priceData += prices[i];
-    if (i !== (prices.length-1)){
-      priceData += ',';
-    }
-  }
-
-  for (let i = 0; i < sizes.length; ++i) {
-    sizeData += sizes[i];
-    if (i !== (sizes.length-1)){
-      sizeData += ',';
-    }
-  }
-
-  for (let i = 0; i < names.length; ++i) {
-    nameData += "'" + names[i] + "'";
-    if (i !== (names.length-1)){
-      nameData += ',';
-    }
-  }
-
-  bedData += "]";
-  bathData += "]";
-  priceData += "]";
-  sizeData += "]";
-  nameData += "]";
-
-  var url = "http://localhost:8080/search/beds=" + bedData
-   + "/baths=" + bathData + "/price=" + priceData + "/size=" + sizeData + "/aptName=" + nameData;
-
-  return url;
-}
-    </script>
-
-    <script>
-      function displayFull() {
-      var modal = document.getElementById("myModal");
-      var modalImg = document.getElementById("img01");
-
-      window.addEventListener('click',function(){
-          if (event.target === modal && event.target !== modalImg) {
-          modal.style.display = "none";
-        }
-      });
-      // Get the image and insert it inside the modal - use its "alt" text as a caption
-      var img = document.getElementsByClassName("card-img-top")[0];
-
-      var captionText = document.getElementById("caption");
-      
-      modal.style.display = "block";
-      modalImg.src = img.src;
-      captionText.innerHTML = img.alt;
-    }
-
-    function closeModal() {
-      // When the user clicks on <span> (x), close the modal
-      var modal = document.getElementById("myModal");
-      modal.style.display = "none";
-    }
-    </script>
+    <script src="/js/display.js"></script>
     
 </html>

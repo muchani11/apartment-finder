@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link href="/css/furniture.css" rel="stylesheet" type="text/css">
+      <nav class="navbar navbar-expand-md navbar-light bg-light">
+        <a class="navbar-brand" href="#">Navbar</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <!-- <li class="nav-item active">
+                    <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                </li> -->
+                <li class="nav-item">
+                  <a class="nav-link" href="/favorites.html">Favorites</a>
+              </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Furniture</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Find Roommates</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Contact Us</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <body>
+        <div class="post-toolbar">
+            <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#exampleModal">Post Furniture</button>
+        </div>
+        <div class="container-cards">
+            <% if (data.length === 0) {%>
+                <p class="none-message" style="text-align: center">No posts were found.</p>
+            <% } %>
+            <% for(var i = 0; i < data.length; ++i) { %>
+            <% var difference = diff(Date.now(), data[i].Date); %>
+            <div class="card mb-3" style="width: 840px; max-height: 1200px;">
+                <div class="row no-gutters">
+                <div class="col-md-4">
+                    <img src="<%= data[i].Image %>" class="card-img">
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <h5 class="card-title"><%= data[i].ProductName %> </h5>
+                        <p class="card-text"><small class="text-muted">Posted <%= difference %></small></p>
+                        <p class="card-text" style="font-size: 22px;">
+                            <% if (data[i].ProductPrice === 0) { %>
+                                <text style="color:green;"><b>FREE &nbsp;&nbsp;&nbsp;</b></text>
+                            <% } %>
+                            <% if (data[i].ProductPrice !== 0) { %>
+                                <text style="color: green;"><b>$<%= data[i].ProductPrice %> &nbsp;&nbsp;&nbsp;</b></text>
+                            <% } %>
+                            <img src="/images/location.png" style="width: 20px; height: 20px;">
+                            <b><%= data[i].University %></b></p>
+                        <p class="card-text"><%= data[i].ProductDescription %></p>
+                    </div>
+                </div>
+                </div>
+            </div>
+            <% } %>
+        </div>
+
+
+       <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="modal-label" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="modal-label">Fill out the furniture information below:</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                    <form id="post-form">
+                        <div class="form-group">
+                            <label for="furniture-title">Furniture Name</label>
+                            <input type="text" class="form-control" id="furniture-title" placeholder="Enter name" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="furniture-price">Furniture Price (omit $ sign)</label>
+                            <input type="number" class="form-control" id="furniture-price" placeholder="Enter price" required>
+                            <small id="help" class="form-text text-muted">If the item is free, please input 0.</small>
+                        </div>
+
+                        <div class="form-group">
+                          <label for="author-email">Email address</label>
+                          <input type="email" class="form-control" id="author-email" aria-describedby="emailHelp" placeholder="Enter email" required>
+                          <small id="help" class="form-text text-muted">We won't display this email when you post or share it with anyone.</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="furniture-description">Optional Product Description (1000 characters)</label>
+                            <textarea class="form-control" id="furniture-description" rows="3" maxlength=1000></textarea>
+                          </div>
+
+                        <div class="form-group">
+                          <label for="university">University You Attend</label>
+                          <input type="text" class="form-control" id="university" placeholder="i.e., 'UT Austin'" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="furniture-image">Image (optional)</label>
+                            <input type="file" class="form-control-file" id="furniture-image">
+                          </div>
+                      </form>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  <button form="post-form" value="Submit" class="btn btn-primary">Post Item</button>
+                </div>
+              </div>
+            </div>
+          </div> 
+    </body>
+    <script src="/js/furniture.js"></script>
+    </html>

@@ -6,3 +6,15 @@ node_modules
 
 # Ignore login file
 scraper/login.py
+
+# Ignore uploads folder
+public/uploads
+
+# Ignore fonts folder
+public/fonts
+
+# Ignore images folder
+public/images
+
+# Ignore pycache
+scraper/__pycache__

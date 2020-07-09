@@ -1,0 +1,258 @@
+html {
+    width: 100%; 
+    height: 100%; 
+    margin: 0 auto; 
+    padding: 0;
+    font-family: "Titillium";
+  }
+  
+  body {
+    width: 100%; 
+    height: 100%; 
+    margin: 0 auto; 
+    padding: 0;
+  }
+  
+  #index {
+    width: 100%; 
+    height: 100%; 
+    margin: 0 auto; 
+    padding: 0;
+    font-family: "Titillium";
+  }
+  
+  
+  
+  #background {
+  width: 100%;
+  height: 90%;
+  background-size: cover;
+  z-index: -10;
+  }
+  
+  .top-container {
+    background-color: white;
+  }
+  @font-face {
+  font-family: "Titillium";
+  src: url("../fonts/TitilliumWeb-Regular.ttf");
+  }
+  
+  .main-text {
+  max-width: 1000px;
+  margin: 0 auto;
+  text-align: center;
+  position: relative;
+  top: -85%;
+  }
+  
+  .font-weight-bold {
+  font-weight: 700;
+  font-size: 3rem;
+  }
+  
+  .subheader {
+    font-weight: lighter;
+  }
+  .row{
+  padding-left: 4px;
+  padding-right: 4px;
+  }
+  
+  .dropdown {
+  margin: 0 auto;
+  display: flex;
+  position: relative;
+  top: -100px;
+  }
+  
+  .container {
+  text-align: center;
+  position: relative;
+  display: flex;
+  top: 110px;
+  }
+  
+  .container-display {
+    text-align: center;
+    position: relative;
+    display: flex;
+    margin: 0 auto;
+  }
+  
+
+  .card-img-top {
+    height: 50%;
+    cursor: pointer; 
+    max-height: 250px;
+    min-height: 200px;
+  }
+  
+  .card-img-top:hover {opacity: 0.5;}
+  
+  .card-title {
+    font-size: 30px;
+  }
+  
+  .card-body {
+    margin-top: -27px;
+  }
+  
+  h6 {
+    font-size: 20px;
+  }
+  
+  .availabilityText {
+    color: white;
+  }
+  
+  .card-text, .availabilityText {
+    font-size: 17px;
+  }
+  
+  .mb-3 {
+      margin: 0 auto;
+  }
+  
+  .container-cards {
+    border: 1px solid #cdd6e1;
+    border-radius: 20px;
+    max-width: 1100px;
+    margin: auto auto 50px;
+    background-color: lightblue;
+  }
+  
+  .card-deck {
+    margin:  30px auto;
+  }
+  
+  
+  
+  /* Caption of Modal Image (Image Text) - Same Width as the Image */
+  #caption {
+    margin: auto;
+    display: block;
+    width: 80%;
+    max-width: 700px;
+    text-align: center;
+    color: #ccc;
+    padding: 10px 0;
+    height: 150px;
+  }
+  
+  @keyframes zoom {
+    from {transform:scale(0)}
+    to {transform:scale(1)}
+  }
+  
+  /* The Close Button */
+  .close {
+    position: absolute;
+    top: 15px;
+    right: 35px;
+    color: #f1f1f1;
+    font-size: 40px;
+    font-weight: bold;
+    transition: 0.3s;
+  }
+  
+  .close:hover,
+  .close:focus {
+    color: #bbb;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  
+
+  
+  /* .text-input-range-inner {
+  display: flex;
+  align-items: baseline;
+  } */
+  
+  ul {
+  list-style: none;
+  }
+  
+  #favorite {
+  position: absolute; 
+  top:0;
+  right: 0;
+  z-index: 1;
+  cursor: pointer;
+  font-size: 28px;
+  color: red;
+  }
+  
+  .modal-body, .modal-label{
+      font-family: "Titillium";
+      font-size: 20px;
+  }
+  
+  .nav-item {
+  font-size: 18px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding-left: 5px;
+  padding-right: 5px;
+  }
+  
+  .nav-item :hover {
+   color: darkblue !important;
+  }
+  
+  .navbar{
+   width: 1000px;
+  margin: 0 auto;
+  background-color: white !important;
+  }
+  
+  .aptName {
+  text-align: center;
+  }
+  
+  .other-features {
+    display: flex;
+    max-width: 1000px;
+    margin-right: auto;
+    margin-left: auto;
+  }
+  .info-card {
+    width: 30%;
+    margin: 0 auto;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    transition: 0.3s;
+    border-radius: 5px; /* 5px rounded corners */
+    background-color: white;
+  }
+  
+  /* On mouse-over, add a deeper shadow */
+  .info-card:hover {
+    box-shadow: 0 8px 32px 0 rgba(0,0,0,0.2);
+  }
+  
+  /* Add some padding inside the card container */
+  .info-card-container {
+    padding: 2px 16px;
+  }
+  
+  .bottom {
+    position: relative;
+    top: -150px;
+  }
+  
+  .external {
+    text-align: center;
+    position: relative;
+    top: -30px;
+  }
+  
+  .features-message {
+    font-size: 40px;
+  }
+  .card-top {
+    font-size: 30px;
+  }
+  
+  .card-mid-text {
+    font-size: 20px;
+  }  
