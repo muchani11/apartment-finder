@@ -5,6 +5,9 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tail.select@0.5.15/js/tail.select.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tail.select@0.5.15/css/default/tail.select-dark.css">
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="/css/styles.css" rel="stylesheet" type="text/css">
       <nav class="navbar navbar-expand-md navbar-light bg-light">
@@ -14,21 +17,21 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ml-auto">
-                <!-- <li class="nav-item active">
-                    <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-                </li> -->
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Home</a>
+                </li>
                 <li class="nav-item">
                   <a class="nav-link" href="/favorites.html">Favorites</a>
               </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Furniture</a>
+                  <a class="nav-link" href="/sublet">Sublet</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/furniture">Furniture</a>
                 </li>
             </ul>
             <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Find Roommates</a>
-                </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">Contact Us</a>
                 </li>
@@ -37,108 +40,176 @@
     </nav>
 
     <body>
-
-      <div class="container-display">
-        <div class="row">
-          <div class="col-lg-12">
-            <div class="button-group">
-              <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown"><span>Beds</span> <span class="caret"></span></button>
-              <ul class="dropdown-menu menu-1">
-                <li><a href="#" class="small" data-value="option1-1" tabIndex="-1"><input name="beds" type="checkbox"/>&nbsp;Any</a></li>
-                <li><a href="#" class="small" data-value="option2-1" tabIndex="-1"><input name="beds" type="checkbox"/>&nbsp;1</a></li>
-                <li><a href="#" class="small" data-value="option3-1" tabIndex="-1"><input name="beds" type="checkbox"/>&nbsp;2</a></li>
-                <li><a href="#" class="small" data-value="option4-1" tabIndex="-1"><input name="beds" type="checkbox"/>&nbsp;3</a></li>
-                <li><a href="#" class="small" data-value="option5-1" tabIndex="-1"><input name="beds" type="checkbox"/>&nbsp;4</a></li>
-                <li><a href="#" class="small" data-value="option6-1" tabIndex="-1"><input name="beds" type="checkbox"/>&nbsp;5</a></li>
-              </ul>
+    
+      <div class="post-toolbar">
+        <div class="container-display">
+          <div class="search-tools">
+            <div class="col-lg-12">
+              <select id="bedrooms-display" class="bedrooms-display dark-feather" multiple>
+                <option>Studio</option>
+                <option>1 Bed</option>
+                <option>2 Beds</option>
+                <option>3 Beds</option>
+                <option>4 Beds</option>
+                <option>5 Beds</option>
+              </select>
             </div>
           </div>
-        </div>
-
-        <div class="row">
-          <div class="col-lg-12">
-            <div class="button-group">
-              <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown"><span>Baths</span> <span class="caret"></span></button>
-              <ul class="dropdown-menu menu-2">
-                <li><a href="#" class="small" data-value="option1-2" tabIndex="-1"><input name="baths" type="checkbox"/>&nbsp;Any</a></li>
-                <li><a href="#" class="small" data-value="option2-2" tabIndex="-1"><input name="baths" type="checkbox"/>&nbsp;1</a></li>
-                <li><a href="#" class="small" data-value="option3-2" tabIndex="-1"><input name="baths" type="checkbox"/>&nbsp;2</a></li>
-                <li><a href="#" class="small" data-value="option4-2" tabIndex="-1"><input name="baths" type="checkbox"/>&nbsp;3</a></li>
-                <li><a href="#" class="small" data-value="option5-2" tabIndex="-1"><input name="baths" type="checkbox"/>&nbsp;4</a></li>
-                <li><a href="#" class="small" data-value="option6-2" tabIndex="-1"><input name="baths" type="checkbox"/>&nbsp;5</a></li>
-              </ul>
+  
+          <div class="row search">
+            <div class="col-lg-12">
+              <select id="bathrooms-display" class="bathrooms-display dark-feather" multiple>
+                <option>1 Bath</option>
+                <option>2 Baths</option>
+                <option>3 Baths</option>
+                <option>4 Baths</option>
+                <option>5 Baths</option>
+              </select>
+                
             </div>
           </div>
-        </div>
 
-        <div class="row">
-          <div class="col-lg-12">
-            <div class="button-group">
-              <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown"><span>Price</span> <span class="caret"></span></button>
-              <ul class="dropdown-menu menu-3">
-                <li><a href="#" class="small" data-value="option1-3" tabIndex="-1"><input name="prices" type="checkbox"/>&nbsp;Any</a></li>
-                <li><a href="#" class="small" data-value="option2-3" tabIndex="-1"><input name="prices" type="checkbox"/>&nbsp;1</a></li>
-                <li><a href="#" class="small" data-value="option3-3" tabIndex="-1"><input name="prices" type="checkbox"/>&nbsp;2</a></li>
-                <li><a href="#" class="small" data-value="option4-3" tabIndex="-1"><input name="prices" type="checkbox"/>&nbsp;3</a></li>
-                <li><a href="#" class="small" data-value="option5-3" tabIndex="-1"><input name="prices" type="checkbox"/>&nbsp;4</a></li>
-                <li><a href="#" class="small" data-value="option6-3" tabIndex="-1"><input name="prices" type="checkbox"/>&nbsp;5</a></li>
-              </ul>
+          <div class="row search">
+            <div class="col-lg-12">
+              <select id="apartments-display" class="apartments-display dark-feather" multiple>
+                <option data-description="(512) 477-3400">26 West</option>
+                <option data-description="(512) 478-9811">The Block</option>
+                <option data-description="(512) 478-9811">Crest At Pearl</option>
+                <option data-description="(512) 582-0200">The Callaway House</option>
+                <option data-description="(512) 478-9811">The Castilian</option>
+                <option data-description="(512) 478-9811">Texan & Vintage</option>
+                <option data-description="(512) 201-2713">Rio West</option>
+                <option data-description="(737) 207-9400">Skyloft</option>
+                <option data-description="(512) 537-4433">Twenty Two 15</option>
+                <option data-description="(512) 391-1991">21 Rio</option>
+                <option data-description="(737) 204-2650">The Nine at Rio</option>
+              </select>
+                
             </div>
           </div>
-        </div>
 
-        <div class="row">
-          <div class="col-lg-12">
-            <div class="button-group">
-              <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown"><span>Size</span> <span class="caret"></span></button>
-              <ul class="dropdown-menu menu-4">
-                <li><a href="#" class="small" data-value="option1-4" tabIndex="-1"><input name="sizes" type="checkbox"/>&nbsp;Any</a></li>
-                <li><a href="#" class="small" data-value="option2-4" tabIndex="-1"><input name="sizes" type="checkbox"/>&nbsp;1</a></li>
-                <li><a href="#" class="small" data-value="option3-4" tabIndex="-1"><input name="sizes" type="checkbox"/>&nbsp;2</a></li>
-                <li><a href="#" class="small" data-value="option4-4" tabIndex="-1"><input name="sizes" type="checkbox"/>&nbsp;3</a></li>
-                <li><a href="#" class="small" data-value="option5-4" tabIndex="-1"><input name="sizes" type="checkbox"/>&nbsp;4</a></li>
-                <li><a href="#" class="small" data-value="option6-4" tabIndex="-1"><input name="sizes" type="checkbox"/>&nbsp;5</a></li>
-              </ul>
+            <div class="row search">
+              <div class="col-lg-12">
+                <div class="button-group">
+                  <button type="button" class="btn dropdown-toggle" data-toggle="dropdown"><span>Price</span> <span class="caret"></span></button>
+                  <ul class="dropdown-menu menu-3">
+                    <li><a href="#" class="small" data-value="option1-3" tabIndex="-1"><input name="prices" type="checkbox"/>&nbsp;Any</a></li>
+                    <li><a href="#" class="small" data-value="option2-3" tabIndex="-1"><input name="prices" type="checkbox"/>&nbsp;1</a></li>
+                    <li><a href="#" class="small" data-value="option3-3" tabIndex="-1"><input name="prices" type="checkbox"/>&nbsp;2</a></li>
+                    <li><a href="#" class="small" data-value="option4-3" tabIndex="-1"><input name="prices" type="checkbox"/>&nbsp;3</a></li>
+                    <li><a href="#" class="small" data-value="option5-3" tabIndex="-1"><input name="prices" type="checkbox"/>&nbsp;4</a></li>
+                    <li><a href="#" class="small" data-value="option6-3" tabIndex="-1"><input name="prices" type="checkbox"/>&nbsp;5</a></li>
+                  </ul>
+                </div>
+              </div>
             </div>
+
+            <div class="row search">
+              <div class="col-lg-12">
+                <div class="button-group">
+                  <button type="button" class="btn dropdown-toggle" data-toggle="dropdown"><span>Size</span> <span class="caret"></span></button>
+                  <ul class="dropdown-menu menu-4">
+                    <li><a href="#" class="small" data-value="option1-4" tabIndex="-1"><input name="sizes" type="checkbox"/>&nbsp;Any</a></li>
+                    <li><a href="#" class="small" data-value="option2-4" tabIndex="-1"><input name="sizes" type="checkbox"/>&nbsp;1</a></li>
+                    <li><a href="#" class="small" data-value="option3-4" tabIndex="-1"><input name="sizes" type="checkbox"/>&nbsp;2</a></li>
+                    <li><a href="#" class="small" data-value="option4-4" tabIndex="-1"><input name="sizes" type="checkbox"/>&nbsp;3</a></li>
+                    <li><a href="#" class="small" data-value="option5-4" tabIndex="-1"><input name="sizes" type="checkbox"/>&nbsp;4</a></li>
+                    <li><a href="#" class="small" data-value="option6-4" tabIndex="-1"><input name="sizes" type="checkbox"/>&nbsp;5</a></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <button class="btn btn-primary" id="submit" onclick="getData()">Search</button>
+          </div>
+
+          <div class="sort-tools">
+            <select name="options-sort" id="sort">
+              <% if (sortBy && sortBy.indexOf('Beds') !== -1) { %>
+              <option value="beds-sort" selected>Beds (ascending)</option>
+              <option value="baths-sort">Baths (ascending)</option>
+              <option value="price-sort">Price (ascending)</option>
+              <option value="size-sort">Size (ascending)</option>
+              <% } else if (sortBy && sortBy.indexOf('Baths') !== -1) {%>
+                <option value="beds-sort">Beds (ascending)</option>
+                <option value="baths-sort" selected>Baths (ascending)</option>
+                <option value="price-sort">Price (ascending)</option>
+                <option value="size-sort">Size (ascending)</option>
+              <% } else if (sortBy && sortBy.indexOf('Price') !== -1) {%>
+                <option value="beds-sort">Beds (ascending)</option>
+                <option value="baths-sort">Baths (ascending)</option>
+                <option value="price-sort" selected>Price (ascending)</option>
+                <option value="size-sort">Size (ascending)</option>
+              <% } else if (sortBy && sortBy.indexOf('Size') !== -1) {%>
+                <option value="beds-sort">Beds (ascending)</option>
+                <option value="baths-sort">Baths (ascending)</option>
+                <option value="price-sort">Price (ascending)</option>
+                <option value="size-sort" selected>Size (ascending)</option>
+              <% } else { %>
+                <option value="beds-sort" selected>Beds (ascending)</option>
+                <option value="baths-sort">Baths (ascending)</option>
+                <option value="price-sort">Price (ascending)</option>
+                <option value="size-sort" >Size (ascending)</option>
+              <% } %>
+            </select>
+
+            <button type="button" class="btn btn-success" id="init-sort" onclick="sortData()">Sort Items</button>
           </div>
         </div>
-
-        <div class="row">
-          <div class="col-lg-12">
-            <div class="button-group">
-              <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown"><span>Apartment Name</span> <span class="caret"></span></button>
-              <ul class="dropdown-menu menu-5">
-                <li><a href="#" class="small" data-value="option1-5" tabIndex="-1"><input name="names" type="checkbox"/>&nbsp;Any</a></li>
-                <li><a href="#" class="small" data-value="option2-5" tabIndex="-1"><input name="names" type="checkbox"/>&nbsp;21rio</a></li>
-                <li><a href="#" class="small" data-value="option3-5" tabIndex="-1"><input name="names" type="checkbox"/>&nbsp;2</a></li>
-                <li><a href="#" class="small" data-value="option4-5" tabIndex="-1"><input name="names" type="checkbox"/>&nbsp;3</a></li>
-                <li><a href="#" class="small" data-value="option5-5" tabIndex="-1"><input name="names" type="checkbox"/>&nbsp;4</a></li>
-                <li><a href="#" class="small" data-value="option6-5" tabIndex="-1"><input name="names" type="checkbox"/>&nbsp;5</a></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-        <button id="submit" onclick="getData()">Search</button>
-
-        <select name="options-sort" id="sort">
-          <option value="beds-sort">Beds (ascending)</option>
-          <option value="baths-sort">Baths (ascending)</option>
-          <option value="price-sort">Price (ascending)</option>
-          <option value="size-sort">Size (ascending)</option>
-        </select>
-
-        <button id="init-sort" onclick="sortData()">Sort Items</button>
       </div>
       
+      <div class="explanation-info">
+        <a id="process-tooltip" data-toggle="tooltip" data-placement="bottom" data-html="true" 
+        title="Choose your feature preferences from the dropdowns above, and we will display all apartment units 
+          with matching criteria from various apartment complexes for the relevant lease term. 
+          You then have the ability to:<br><br>
+          1. Favorite your preferred units by clicking the heart icon. They will then appear on your favorites page.<br>
+          2. Sort results by different categories. Note that units with unlisted prices/sizes will appear first when sorted.<br><br>
+          If there are apartments not listed on this website that you would like us to include, click the 'Contact Us' link!">
+          <svg style="vertical-align:middle;"width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-info-circle-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM8 5.5a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
+          </svg>
+          <text style="vertical-align: middle;"> &nbsp;How does this process work?</text>
+         </a>
+
+         <a data-toggle="tooltip" data-placement="bottom" data-html="true" 
+        title="All our information is obtained directly from respective apartment websites, and
+          is updated regularly to reflect the most current lease term.
+          Potential accuracy issues may arise because:<br><br>
+          1. An apartment website was not updated after a unit was sold or made available for purchase.<br>
+          2. There was a manual error in populating an apartment website with available units.<br><br>
+          If you find any accuracy issues, please click the flag icon to notify us.">
+          <svg style="vertical-align:middle;"width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-info-circle-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM8 5.5a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
+          </svg>
+          <text style="vertical-align: middle;"> &nbsp;How accurate is this information?</text>
+         </a>
+      </div>
 
       <div class="container-cards">
             <div class="card-deck">
               <% if (data.length === 0) { %>
-                <p>No results were found for the specific search.</p>
+                <div class="disclaimer-noresults">
+                  <img src="/images/noresults.png">
+                  <h1 class="disclaimer">No results found.</h1>
+                </div>
               <% } %>
               <% for(var i=0; i<data.length; i++) {%>
                 <div class="col-md-4">
-                    <p class="aptName"><%= data[i].Apartment %></p>
+                  <div class="complex-info">
+                    <a target="_blank" class="tiptext aptName" href="<%= data[i].Website %>">
+                      <%= data[i].Apartment %>
+                    </a>
+                  </div>
+                  <div class="map-phone">
+                    <i class="fa fa-map-marker tiptext" aria-hidden="true">
+                      <iframe class="description" src="<%= data[i].Map %>" width="600" height="450" frameborder="0" style="border:0;" aria-hidden="false" tabindex="0" allowfullscreen></iframe>
+                    </i>
+                    <text> &nbsp;|&nbsp; </text>
+                    <a data-toggle="tooltip" data-placement="right" title="<%= data[i].PhoneNum %>" >
+                      <i class="fa fa-phone" aria-hidden="true"></i>
+                    </a>
+                  </div>
                     <div class="card mb-5" style="min-height:30rem; max-height:30rem;">
                       <div class="icons">
                         <img class="card-img-top" src="<%= data[i].Image %>" alt="<%= data[i].Name %>" onclick="displayFull('<%= data[i].Image %>', '<%= data[i].Name %>')" title="Click to enlarge">
@@ -207,7 +278,7 @@
                           </span>
                         <% } %>
 
-                        <a href="<%= data[i].Link %>" class="btn btn-block btn-primary">View Unit</a>
+                        <a target="_blank" href="<%= data[i].Link %>" class="btn btn-block btn-primary">View Unit</a>
                       </div>
                     </div>
                   </div>
@@ -249,40 +320,85 @@
       </div>
 
 
-      <div class="display-pagination">
-        <div class="pagination">
-         <% if (currentPage == 1 && pages > 1) { %> 
-          <a href="<%= path %>/<%= parseInt(currentPage) + 1 %>">
-            <span>
-             Page <%=  parseInt(currentPage) + 1 %>
-             <i class="icon ion-ios-arrow-forward"></i>
-            </span>
-          </a>
-        <% } else if (currentPage < pages) { %>
-         <a href="<%= path %>/<%= parseInt(currentPage) - 1 %>">
-           <span>
-             <i class="icon ion-ios-arrow-back"></i>
-             Page <%= parseInt(currentPage) - 1 %>
-           </span>
-         </a>
-         <a href="<%= path %>/<%= parseInt(currentPage) + 1 %>">
-           <span>
-            Page <%= parseInt(currentPage) + 1 %>
-            <i class="icon ion-ios-arrow-forward"></i>
-           </span>
-         </a>
-       <% } else if (currentPage == pages && pages > 1) { %>
-        <a href="<%= path %>/<%= parseInt(currentPage) - 1 %>">
-          <span>
-           <i class="icon ion-ios-arrow-back"></i>Page 
-           <%=parseInt(currentPage) - 1 %>
-          </span>
-        </a>
-         <% } %>
-        </div>
-       </div>
+       <nav aria-label="Page navigation" id="pagination-block">
+        <% if (!(currentPage > parseInt(pages) || parseInt(pages) === 0)) { %>
+          <p class="page-num-description">Showing Page <b><%=parseInt(currentPage) %></b> of <b><%=parseInt(pages)%></b></p>
+          <% if (parseInt(pages) !== 1) { %> 
+          <ul class="pagination pagination-circle pg-blue justify-content-center pagination-lg">
+            <% if (currentPage == 1 && pages > 1) { %> 
+              <li class="page-item disabled"><a class="page-link" href="<%= path %>page=">First</a></li>
+              <li class="page-item disabled">
+                <a class="page-link" aria-label="Previous" href="<%= path %>page=<%= parseInt(currentPage) - 1 %>">
+                  <span aria-hidden="true">&laquo;</span>
+                  <span class="sr-only">Previous</span>
+                </a>
+              </li>
+            <% } else if (currentPage <= pages) { %>
+              <li class="page-item"><a class="page-link" href="<%= path %>/page=1">First</a></li>
+              <li class="page-item">
+                <a class="page-link" aria-label="Previous" href="<%= path %>page=<%= parseInt(currentPage) - 1 %>">
+                  <span aria-hidden="true">&laquo;</span>
+                  <span class="sr-only">Previous</span>
+                </a>
+              </li>
+            <% } %>
+          
+            <% if (currentPage >= 5) { %>
+              <% var diff = (currentPage + 1 < pages) ? 2 : (5 - (pages - currentPage) - 1); %>
+              <% var iterPage = currentPage - diff; %>
+              <% var i = 0; %>
+              <% while (i < 5 && (iterPage + i) <= pages) { %>
+                <% if ((iterPage + i) === parseInt(currentPage)) { %>
+                  <li class="page-item active"><a class="page-link" href="<%=path %>page=<%=iterPage + i%>"><%= iterPage + i%></a></li>
+                <% } else { %>
+                  <li class="page-item"><a class="page-link" href="<%=path %>page=<%=iterPage + i%>"><%= iterPage + i%></a></li>
+                <% } %>
+                <% i++ %>
+              <% } %>
+            <% } else { %>
+              <% var iterPage = 1; %>
+              <% while (iterPage <= 5 && iterPage <= pages) { %>
+                <% if (iterPage === parseInt(currentPage)) { %>
+                  <li class="page-item active"><a class="page-link" href="<%=path %>page=<%=iterPage %>"><%= iterPage %></a></li>
+                <% } else { %>
+                  <li class="page-item"><a class="page-link" href="<%=path %>page=<%=iterPage %>"><%= iterPage %></a></li>
+                <% } %>
+                <% iterPage++; %>
+              <% } %>
+            <% } %>
+            
+            <% if (currentPage < pages) { %>
+              <li class="page-item">
+                <a class="page-link" aria-label="Next" href="<%= path %>page=<%= parseInt(currentPage) + 1 %>">
+                  <span aria-hidden="true">&raquo;</span>
+                  <span class="sr-only">Next</span>
+                </a>
+              </li>
+              <li class="page-item"><a class="page-link" href="<%= path %>page=<%= parseInt(pages) %>">Last</a></li>
+            <% } else { %>
+              <li class="page-item disabled">
+                <a class="page-link" aria-label="Next" href="<%= path %>page=<%= parseInt(currentPage) + 1 %>">
+                  <span aria-hidden="true">&raquo;</span>
+                  <span class="sr-only">Next</span>
+                </a>
+              </li>
+
+              <li class="page-item disabled"><a class="page-link" href="<%= path %>page=<%= parseInt(pages) %>">Last</a></li>
+            <% } %>
+            
+          </ul>
+
+          <% } %>
+        <% } %>
+      </nav>
+
     </body>
 
+    <script>
+      $(document).ready(function(){
+        $('[data-toggle="tooltip"]').tooltip();
+      });
+    </script>
 
     <script src="/js/display.js"></script>
     

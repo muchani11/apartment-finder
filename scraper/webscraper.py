@@ -30,6 +30,19 @@ available_units = []
 links = []
 deposits = []
 images = []
+aptIDs = []
+
+id_26west = 1
+id_block = 2
+id_crest = 3
+id_callaway = 4
+id_castilian = 5
+id_texan_vintage = 6
+id_riowest = 7
+id_skyloft = 8
+id_2215 = 9
+id_21rio = 10
+id_9rio = 11
 
 
 def site_init(url):
@@ -37,7 +50,7 @@ def site_init(url):
     time.sleep(2)
 
 
-def insert_data(name, bed, bath, price, wait, unit, size, dep, link, apt_complex, image):
+def insert_data(name, bed, bath, price, wait, unit, size, dep, link, apt_complex, image, currId):
     model_names.append(name)
     if bed == 'Studio':
         bed = 0
@@ -51,6 +64,7 @@ def insert_data(name, bed, bath, price, wait, unit, size, dep, link, apt_complex
     links.append(link)
     apt.append(apt_complex)
     images.append(image)
+    aptIDs.append(currId)
     if price == '':
         price = '0'
     if size == '':
@@ -111,7 +125,8 @@ def extract_26west():
         if name.find('Studio') > -1:
             bed = 0
         apt_name = '26 West'
-        insert_data(name, bed, bath, price, wait, units, size, dep, link, apt_name, image)
+        map_src = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3445.11627248781!2d-97.74586208492458!3d30.290751381793395!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8644b578e657244f%3A0x6de775e1eb3b500a!2s26%20West!5e0!3m2!1sen!2sus!4v1595050345489!5m2!1sen!2sus"
+        insert_data(name, bed, bath, price, wait, units, size, dep, link, apt_name, image, id_26west)
 
 
 def extract_blockonpearl():
@@ -144,7 +159,8 @@ def extract_blockonpearl():
         wait = 0
         dep = 0
         apt_name = "The Block"
-        insert_data(name, bed, bath, price, wait, units, size, dep, link, apt_name, image)
+        map_src = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3445.2959461004248!2d-97.74890928492472!3d30.285635481795275!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8644b54a4d30ff83%3A0xd277e60fc8ccafd4!2sThe%20Block%20on%20Pearl%20South!5e0!3m2!1sen!2sus!4v1595055068597!5m2!1sen!2sus"
+        insert_data(name, bed, bath, price, wait, units, size, dep, link, apt_name, image, id_block)
 
 
 def extract_crestatpearl():
@@ -172,7 +188,8 @@ def extract_crestatpearl():
         if name.find('Studio') > -1:
             bed = 0
         apt_name = "Crest at Pearl"
-        insert_data(name, bed, bath, price, wait, units, size, dep, link, apt_name, image)
+        map_src = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3445.2845587021834!2d-97.74569063410682!3d30.285959741773237!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8644b578073cb2ef%3A0x3ed073bdee1d9e85!2sCrest%20at%20Pearl!5e0!3m2!1sen!2sus!4v1595055162635!5m2!1sen!2sus"
+        insert_data(name, bed, bath, price, wait, units, size, dep, link, apt_name, image, id_crest)
 
 
 def extract_callaway():
@@ -201,7 +218,8 @@ def extract_callaway():
         if name.find('Studio') > -1:
             bed = 0
         apt_name = "The Callaway House"
-        insert_data(name, bed, bath, price, wait, units, size, dep, link, apt_name, image)
+        map_src = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3445.3227548314526!2d-97.74566498492474!3d30.284872081795445!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8644b577c8476ae1%3A0x14e5f8aadf76c05a!2sThe%20Callaway%20House%20Austin!5e0!3m2!1sen!2sus!4v1595055224429!5m2!1sen!2sus"
+        insert_data(name, bed, bath, price, wait, units, size, dep, link, apt_name, image, id_callaway)
 
 
 def extract_castilian():
@@ -230,7 +248,8 @@ def extract_castilian():
             bed = 0
 
         apt_name = "The Castilian"
-        insert_data(name, bed, bath, price, wait, units, size, dep, link, apt_name, image)
+        map_src = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3445.234495119047!2d-97.74468298492465!3d30.287385281794514!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8644b577f7e5a8f5%3A0x32d900e927d36037!2sThe%20Castilian!5e0!3m2!1sen!2sus!4v1595055264872!5m2!1sen!2sus"
+        insert_data(name, bed, bath, price, wait, units, size, dep, link, apt_name, image, id_castilian)
 
 
 def extract_texan_vintage():
@@ -259,7 +278,8 @@ def extract_texan_vintage():
         if name.find('Studio') > -1:
             bed = 0
         apt_name = "Texan & Vintage"
-        insert_data(name, bed, bath, price, wait, units, size, dep, link, apt_name, image)
+        map_src = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3445.236616351739!2d-97.74458038492466!3d30.28732488179459!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8644b5781c5c5f63%3A0xd9dc07203f55082f!2sTexan%20%26%20Vintage%20West%20Campus!5e0!3m2!1sen!2sus!4v1595055303478!5m2!1sen!2sus"
+        insert_data(name, bed, bath, price, wait, units, size, dep, link, apt_name, image, id_texan_vintage)
 
 
 def extract_riowest():
@@ -297,7 +317,8 @@ def extract_riowest():
             image = image_holder.find_element_by_tag_name('img').get_attribute('src')
             feet = stats.find_element_by_xpath('li[4]/span[2]').get_attribute('innerHTML')
             apt_name = "Rio West"
-            insert_data(name, bed, bath, rent, wait, units, feet, dep, link, apt_name, image)
+            map_src = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3445.052128547562!2d-97.74653228492454!3d30.29257758179265!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8644b5781a69f3bd%3A0x37dd7aa4753d7c4a!2sRio%20West%20Student%20Living!5e0!3m2!1sen!2sus!4v1595055346658!5m2!1sen!2sus"
+            insert_data(name, bed, bath, rent, wait, units, feet, dep, link, apt_name, image, id_riowest)
             site_init(url)
 
 
@@ -331,19 +352,21 @@ def extract_skyloft():
             bath = bath[(bath.find('/ ') + 2):]
             bath = bath[0:bath.find('<')]
             dep = curr.find_element_by_xpath('div/div[2]/div[3]/span[2]').get_attribute('innerHTML')
-            if dep == 'N/A':
+            if dep == 'N/A' or dep == '—':
                 dep = 0
             link = curr.find_element_by_xpath('div/h4/a').get_attribute('href')
             site_init(link)
             stats = driver.find_element_by_class_name('fp-stats-list')
-            rent = stats.find_element_by_xpath('li[1]/span[2]').find_element_by_class_name('radio')
-            rent = rent.find_element_by_tag_name('label').get_attribute('innerHTML')
+            rent = stats.find_element_by_xpath('li[1]/span[2]').get_attribute('innerHTML')
+            print(rent)
+                #.find_element_by_class_name('radio') rent = rent.find_element_by_tag_name('label').get_attribute('innerHTML')
             if rent.find('$') > -1:
                 rent = rent[rent.rfind('$'):]
             image = driver.find_element_by_tag_name('img').get_attribute('src')
             feet = stats.find_element_by_xpath('li[4]/span[2]').get_attribute('innerHTML')
             apt_name = "Skyloft"
-            insert_data(name, bed, bath, rent, wait, units, feet, dep, link, apt_name, image)
+            map_src = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3445.2705731134893!2d-97.74569568492471!3d30.28635798179501!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8644b577fca21c09%3A0xea44e613999fb295!2sSkyloft%20Austin!5e0!3m2!1sen!2sus!4v1595055388001!5m2!1sen!2sus"
+            insert_data(name, bed, bath, rent, wait, units, feet, dep, link, apt_name, image, id_skyloft)
             site_init(url)
             frame = driver.find_element_by_id('website_678753')
             driver.switch_to.frame(frame)
@@ -390,7 +413,8 @@ def extract_twentytwo15():
         except NoSuchElementException:
             image = 'https://dubsism.files.wordpress.com/2017/12/image-not-found.png?w=768'
         apt_name = "Twenty Two 15"
-        insert_data(name, bed, bath, price, wait, units, sqft, dep, temp_url, apt_name, image)
+        map_src = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3445.2642166115716!2d-97.74674228492472!3d30.28653898179494!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8644b57777af2db1%3A0x448b1a1f25beb08c!2sTwenty%20Two%2015!5e0!3m2!1sen!2sus!4v1595055428053!5m2!1sen!2sus"
+        insert_data(name, bed, bath, price, wait, units, sqft, dep, temp_url, apt_name, image, id_2215)
         site_init(url)
 
 
@@ -437,7 +461,8 @@ def extract_21rio():
 
             apt_name = "21 Rio"
             dep = 0
-            insert_data(name, bed, bath, price, must_wait, units, size, dep, link, apt_name, image)
+            map_src = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3445.337307284444!2d-97.74708138492475!3d30.284457681795605!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8644b576fde23075%3A0xfda2d2f607ef31fd!2s21%20Rio!5e0!3m2!1sen!2sus!4v1595055484058!5m2!1sen!2sus"
+            insert_data(name, bed, bath, price, must_wait, units, size, dep, link, apt_name, image, id_21rio)
             site_init(url)
 
 
@@ -474,9 +499,10 @@ def extract_9rio():
             price = price[price.rfind("$")+1:price.rfind("/")]
             units = isSold[0:isSold.find(" ")]
             apt_name = "The Nine at Rio"
+            map_src = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3445.343568576401!2d-97.74753758492479!3d30.284279381795717!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8644b5b1983e72e1%3A0xc5314299021d0301!2sThe%20Nine%20at%20Rio!5e0!3m2!1sen!2sus!4v1595055525566!5m2!1sen!2sus"
             wait = 0
             dep = 0
-            insert_data(name, bed, bath, price, wait, units, size, dep, link, apt_name, image)
+            insert_data(name, bed, bath, price, wait, units, size, dep, link, apt_name, image, id_9rio)
 
         site_init(url)
 
@@ -488,37 +514,40 @@ def connect():
         if connection.is_connected():
             print('Connected to MySQL database')
 
-        print("length issss: ", len(model_names))
-        for i in range(len(model_names)):
-            name = model_names[i]
-            bed = beds[i]
-            bath = baths[i]
-            min_pr = min_prices[i]
-            max_pr = max_prices[i]
-            wait = waitlist[i]
-            unit = available_units[i]
-            min_si = min_sizes[i]
-            max_si = max_sizes[i]
-            dep = deposits[i]
-            link = links[i]
-            apartment = apt[i]
-            image = images[i]
-            args = (name, bed, bath, min_pr, max_pr, dep, wait, unit, min_si, max_si, link, apartment, image)
-            mySql_insert_query = "INSERT INTO apartment_data (Name, Beds, Baths, MinPrice, MaxPrice, Deposits, Waitlist, Available_Units, MinSize, MaxSize, Link, Apartment, Image) \
-             VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+    except Error as e:
+        print(e)
+
+    print("length issss: ", len(model_names))
+    for i in range(len(model_names)):
+        name = model_names[i]
+        bed = beds[i]
+        bath = baths[i]
+        min_pr = min_prices[i]
+        max_pr = max_prices[i]
+        wait = waitlist[i]
+        unit = available_units[i]
+        min_si = min_sizes[i]
+        max_si = max_sizes[i]
+        dep = deposits[i]
+        link = links[i]
+        apartment = apt[i]
+        image = images[i]
+        apt_id = aptIDs[i]
+        args = (name, bed, bath, min_pr, max_pr, dep, wait, unit, min_si, max_si, link, apartment, image, apt_id)
+        try:
+            mySql_insert_query = "INSERT INTO apartment_data (Name, Beds, Baths, MinPrice, MaxPrice, Deposits, Waitlist, Available_Units, MinSize, MaxSize, Link, Apartment, Image, AptID) \
+             VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
             cursor = connection.cursor()
             cursor.execute(mySql_insert_query, args)
             connection.commit()
             print(cursor.rowcount, "Record inserted successfully into Apartment table")
             cursor.close()
+        except Error as e:
+            print(e)
 
-    except Error as e:
-        print(e)
-
-    finally:
-        if connection is not None and connection.is_connected():
-            connection.close()
-            print('Closed')
+    if connection is not None and connection.is_connected():
+        connection.close()
+        print('Closed')
 
 
 # def insert(model_names, beds, baths, prices, waitlist, available_units, sq_feet, deposits, links, apt):
@@ -546,16 +575,26 @@ options = webdriver.ChromeOptions()
 options.add_argument('headless')
 driver = webdriver.Chrome("/mnt/c/Program Files (x86)/Google/Chrome/Application/chromedriver.exe")
 
-extract_26west()
-extract_blockonpearl()
-extract_crestatpearl()
-extract_callaway()
-extract_castilian()
-extract_texan_vintage()
-extract_riowest()
+#extract_26west()
+#connect()
+#extract_blockonpearl()
+#connect()
+#extract_crestatpearl()
+#connect()
+#extract_callaway()
+#connect()
+#extract_castilian()
+#connect()
+#extract_texan_vintage()
+#connect()
+#extract_riowest()
+#connect()
 extract_skyloft()
+connect()
 extract_21rio()
+connect()
 extract_9rio()
+connect()
 extract_twentytwo15()
 driver.close()
 connect()

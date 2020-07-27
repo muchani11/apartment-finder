@@ -1,94 +1,266 @@
+$(".tiptext").mouseover(function() {
+    $(this).children(".description").show();
+}).mouseout(function() {
+    $(this).children(".description").hide();
+});
+var beds = tail.select(".bedrooms-display",{
+
+    width: '200px',
+  
+    // custom placeholder
+    placeholder: "Bedrooms",
+  
+    // allows to deselect options or not
+    deselect: true,
+  
+    // enables animations
+    animate: true,
+  
+    // determines where to place the select
+    openAbove: null,
+  
+    // stays open
+    stayOpen: false,
+  
+    // opens the select on init
+    startOpen: false,
+  
+    // enables multiple selection
+    multiple: true,
+  
+    // maximum number of options allowed to select
+    multiLimit: Infinity,
+  
+    // pins selected options on the top of the dropdown list.
+    multiPinSelected: false, 
+  
+    // shows a counter
+    multiShowCount: true,
+  
+  
+    // shows "Select All" / "Unselect All" buttons
+    multiSelectAll: true,
+  
+    // shows "All" / "None" buttons on each Optgroup
+    multiSelectGroup: true,
+  
+    // enables descriptions for options
+    descriptions: false,
+  
+  
+    // set the display: none styling, to the source select element.
+    sourceHide: true, 
+  
+    // enables live search
+    search: true,
+  
+    // auto sets the focus
+    searchFocus: true,
+  
+    // highlights matched options
+    searchMarked: true,
+  
+    searchMinLength: 0,  
+  
+    // allows to exclude disabled options on the search
+    searchDisabled: true,
+  
+    // hide options
+    hideSelect: true,
+  
+    // function(item , group , search <string|false>){}
+    cbLoopItem: undefined,
+  
+    // function(label , search <string|false>){}
+    cbLoopGroup: undefined,
+  
+    // gets fired every time when the .init() process of the tail.select instance has been finished / reached the end
+    cbComplete: undefined,
+  
+    // gets fired every time when the Dropdown List gets rendered with no single option
+    cbEmpty: undefined
+    
+  });
+  
+  var baths = tail.select(".bathrooms-display",{
+    width: '200px',
+    placeholder: "Bathrooms",
+    deselect: true,
+    animate: true,
+    openAbove: null,
+    stayOpen: false,
+    multiple: true,
+    multiLimit: Infinity,
+    multiPinSelected: false, 
+    multiShowCount: true,
+    multiSelectAll: true,
+    multiSelectGroup: true,
+    descriptions: false,
+    sourceHide: true, 
+    search: true,
+    searchFocus: false,
+    searchMarked: true,
+    searchMinLength: 0,  
+    searchDisabled: true,
+    hideSelect: true,
+    cbLoopItem: undefined,
+    cbLoopGroup: undefined,
+    cbComplete: undefined,
+    cbEmpty: undefined
+  });
+  
+  var apartments = tail.select(".apartments-display",{
+    width: '215px',
+    placeholder: "Apartment Name",
+    deselect: true,
+    animate: true,
+    openAbove: null,
+    stayOpen: false,
+    multiple: true,
+    multiLimit: Infinity,
+    multiPinSelected: false, 
+    multiShowCount: true,
+    multiSelectAll: true,
+    multiSelectGroup: true,
+    descriptions: true,
+    sourceHide: true, 
+    search: true,
+    searchFocus: false,
+    searchMarked: true,
+    searchMinLength: 0,  
+    searchDisabled: true,
+    hideSelect: true,
+    cbLoopItem: undefined,
+    cbLoopGroup: undefined,
+    cbComplete: undefined,
+    cbEmpty: undefined
+  });
+
+
 function getData() {
-    var beds = [];
-    var baths = [];
+    var bedrooms = beds.select.getElementsByClassName('selected');
+    var bathrooms = baths.select.getElementsByClassName('selected');
     var prices = [];
     var sizes = [];
-    var names = [];
-    $("input:checkbox[name=beds]:checked").each(function(){
-        beds.push($(this).parent().text().trim());
-    });
-
-    $("input:checkbox[name=baths]:checked").each(function(){
-        baths.push($(this).parent().text().trim());
-    });
-
-    $("input:checkbox[name=prices]:checked").each(function(){
-        prices.push($(this).parent().text().trim());
-    });
-
-    $("input:checkbox[name=sizes]:checked").each(function(){
-        sizes.push($(this).parent().text().trim());
-    });
-
-    $("input:checkbox[name=names]:checked").each(function(){
-        names.push($(this).parent().text().trim());
-    });
-
-    var url = assembleURL(beds, baths, prices, sizes, names);
-
+    var names = apartments.select.getElementsByClassName('selected');
+  
+  //   $("input:checkbox[name=beds]:checked").each(function(){
+  //     beds.push($(this).parent().text().trim());
+  // });
+  
+  // $("input:checkbox[name=baths]:checked").each(function(){
+  //     baths.push($(this).parent().text().trim());
+  // });
+  
+  // $("input:checkbox[name=prices]:checked").each(function(){
+  //     prices.push($(this).parent().text().trim());
+  // });
+  
+  // $("input:checkbox[name=sizes]:checked").each(function(){
+  //     sizes.push($(this).parent().text().trim());
+  // });
+  
+  // $("input:checkbox[name=names]:checked").each(function(){
+  //     names.push($(this).parent().text().trim());
+  // });
+  
+  var url = assembleURL(bedrooms, bathrooms, prices, sizes, names);
+  console.log(url);
     $.ajax({
-        url: url,
-        type: 'GET',
-        dataType: 'json',
-        success: function(res) {
-        }
-    });
-
-    window.location.href = url;
+      url: url,
+      type: 'GET',
+      dataType: 'json',
+      success: function(res) {
+      }
+  });
+  
+  window.location.href = url;
     }
 
-    function assembleURL(beds, baths, prices, sizes, names) {
-    var bedData = "[";
-    var bathData = "[";
-    var priceData = "[";
-    var sizeData = "[";
-    var nameData = "[";
-
-    for (let i = 0; i < beds.length; ++i) {
-        bedData += beds[i];
-        if (i !== (beds.length-1)){
-        bedData += ',';
+    function assembleURL(bedrooms, bathrooms, prices, sizes, names) {
+        var bedData = "";
+        var bathData = "";
+        var priceData = "";
+        var sizeData = "";
+        var nameData = "";
+        var atLeastOne = false;
+        var url = "http://localhost:8080/search";
+      
+        for (let i = 0; i < bedrooms.length; ++i) {
+          var temp = bedrooms[i].dataset.key;
+          bedData += temp.substring(0, temp.indexOf(" "));
+          if (i !== (bedrooms.length-1)){
+            bedData += ',';
+          }
         }
-    }
-
-    for (let i = 0; i < baths.length; ++i) {
-        bathData += baths[i];
-        if (i !== (baths.length-1)){
-        bathData += ',';
+      
+        if (bedData !== "") {
+          url += "?beds=" + bedData;
+          atLeastOne = true;
         }
-    }
-
-    for (let i = 0; i < prices.length; ++i) {
-        priceData += prices[i];
-        if (i !== (prices.length-1)){
-        priceData += ',';
+      
+        for (let i = 0; i < bathrooms.length; ++i) {
+          var temp = bathrooms[i].dataset.key;
+          bathData += temp.substring(0, temp.indexOf(" "));
+          if (i !== (bathrooms.length-1)){
+            bathData += ',';
+          }
         }
-    }
-
-    for (let i = 0; i < sizes.length; ++i) {
-        sizeData += sizes[i];
-        if (i !== (sizes.length-1)){
-        sizeData += ',';
+      
+        if (bathData !== "") {
+          if (atLeastOne) 
+            url += "&baths=";
+          else url += "?baths=";
+          url += bathData;
+          atLeastOne = true;
         }
-    }
-
-    for (let i = 0; i < names.length; ++i) {
-        nameData += "'" + names[i] + "'";
-        if (i !== (names.length-1)){
-        nameData += ',';
+      
+        for (let i = 0; i < prices.length; ++i) {
+          priceData += prices[i];
+          if (i !== (prices.length-1)){
+            priceData += ',';
+          }
         }
-    }
-
-    bedData += "]";
-    bathData += "]";
-    priceData += "]";
-    sizeData += "]";
-    nameData += "]";
-
-    var url = "http://localhost:8080/search/beds=" + bedData
-    + "/baths=" + bathData + "/price=" + priceData + "/size=" + sizeData + "/aptName=" + nameData;
-
-    return url;
+      
+        if (priceData !== "") {
+          if (atLeastOne) 
+            url += "&price=";
+          else url += "?price=";
+          url += priceData;
+          atLeastOne = true;
+        }
+      
+        for (let i = 0; i < sizes.length; ++i) {
+          sizeData += sizes[i];
+          if (i !== (sizes.length-1)){
+            sizeData += ',';
+          }
+        }
+      
+        if (sizeData !== "") {
+          if (atLeastOne) 
+            url += "&size=";
+          else url += "?size=";
+          url += sizeData;
+          atLeastOne = true;
+        }
+      
+        for (let i = 0; i < names.length; ++i) {
+          nameData += "'" + names[i].dataset.key + "'";
+          if (i !== (names.length-1)){
+            nameData += ',';
+          }
+        }
+      
+        if (nameData !== "") {
+          if (atLeastOne) 
+            url += "&name=";
+          else url += "?name=";
+          url += encodeURIComponent(nameData);
+          atLeastOne = true;
+        }
+      
+        return url;
     }
 
     function displayFull(img, name) {
@@ -143,7 +315,7 @@ function closeModal() {
     }
     });
 
-    function favoriteUnit(name, apartment) {
+function favoriteUnit(name, apartment) {
     localStorage.setItem(name + "?" + apartment, 'favorited');
     }
 
@@ -155,29 +327,20 @@ function unFavoriteUnit(name, apartment) {
 function sortData() {
     var chosen = $('#sort :selected').text();
     var option = chosen.substring(0, chosen.indexOf(" "));
-    var direction = chosen.substring(chosen.indexOf("(")+1, chosen.indexOf(")"));
-    if (direction === 'ascending')
-    {
-        var currUrl;
-        if (window.location.href.indexOf("sort") == -1) {
-        currUrl = window.location.href;
-        }
-        else {
-        currUrl = window.location.href;
-        currUrl = currUrl.substring(0, currUrl.indexOf("sort")-1);
-        console.log("current URL: ", currUrl);
-        }
-        currUrl += "/sort=" + option + "/order=asc";
 
+    var currUrl;
+    let url = new URL(window.location.href);
+    let params = new URLSearchParams(url.search.slice(1));
+    if (params.get('sort')) { 
+        params.delete('sort'); 
     }
-        $.ajax({
-        url: currUrl,
-        type: 'GET',
-        dataType: 'json',
-        contentType: "application/json; charset=utf-8",
-        success: function(res) {
-        }
-    });
+
+    if (params.get('page')) {
+        params.delete('page');
+    }
+    params.append('sort', option);
+    params.append('page', '1');
+    currUrl = "/search?" + params.toString();
 
     window.location.href = currUrl;
-    }
+}

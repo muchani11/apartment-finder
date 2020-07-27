@@ -19,11 +19,13 @@ window.onload = function() {
 }
 
 
+
 function handleRender(data) {
     var div = document.getElementsByClassName('card-deck')[0];
     if (!data || data.length === 0) {
         var disclaimer = document.createElement('p');
-        disclaimer.innerHTML = "You currently have no favorites added";
+        disclaimer.setAttribute('class', 'disclaimer');
+        disclaimer.innerHTML = "You currently have no favorites added.";
         div.appendChild(disclaimer);
         return;
     }
@@ -53,17 +55,39 @@ function handleRender(data) {
 }
 
 function addTop(data, div) {
+    $('[data-toggle="tooltip"]').tooltip();
+    $(".tiptext").mouseover(function() {
+        $(this).children(".description").show();
+    }).mouseout(function() {
+        $(this).children(".description").hide();
+    });
+    
     var colMd = document.createElement('div');
     colMd.setAttribute('class', 'col-md-4');
-    var aptName = document.createElement('p');
-    aptName.setAttribute('class', 'aptName');
+
+    var complex = document.createElement('div');
+    complex.setAttribute('class', 'complex-info');
+
+    var aptName = document.createElement('a');
+    aptName.setAttribute('class', 'tiptext aptName');
+    aptName.setAttribute('href', data.Website);
+    aptName.setAttribute('target', '_blank');
+    aptName.innerHTML = data.Apartment;
+    complex.appendChild(aptName);
+
+    var mapPhone = document.createElement('div');
+    mapPhone.setAttribute('class', 'map-phone');
+    mapPhone.innerHTML = `<i class="fa fa-map-marker tiptext" aria-hidden="true"> \
+    <iframe class="description" src="${data.Map}" width="600" height="450" \
+    frameborder="0" style="border:0;" aria-hidden="false" tabindex="0" allowfullscreen></iframe></i><text> &nbsp;|&nbsp; </text> \
+    <a data-toggle="tooltip" data-placement="right" title="${data.PhoneNum}" ><i class="fa fa-phone" aria-hidden="true"></i></a>`;
     var cardMd = document.createElement('div');
     cardMd.setAttribute('class', 'card mb-5');
     cardMd.style.minHeight = '30rem';
     cardMd.style.maxHeight = '30rem';
+
     var icons = document.createElement('div');
     icons.setAttribute('class', 'icons');
-    aptName.innerHTML = data.Apartment;
     var img = document.createElement('img');
     setAttributes(img, {'class': 'card-img-top', 'src': data.Image, 
     'alt': data.Name, 'title': 'Click to enlarge', 'onclick': `displayFull('${data.Image}', '${data.Name}')`});
@@ -73,7 +97,8 @@ function addTop(data, div) {
     'name="' + data.Name + '" apt="'+ data.Apartment + '" beds="' +  data.Beds + '" baths="' + data.Baths + 
     '" data-toggle="modal" data-target="#favoriteModal" data-backdrop="false"></i>'
     div.appendChild(colMd);
-    colMd.appendChild(aptName);
+    colMd.appendChild(complex);
+    colMd.appendChild(mapPhone);
     colMd.appendChild(cardMd);
     cardMd.appendChild(icons);
     icons.appendChild(img);
@@ -84,6 +109,13 @@ function addTop(data, div) {
 }
 
 function addBody(data, cardMd) {
+    $('[data-toggle="tooltip"]').tooltip();
+    $(".tiptext").mouseover(function() {
+        $(this).children(".description").show();
+    }).mouseout(function() {
+        $(this).children(".description").hide();
+    });
+    
     var body = document.createElement('div');
     body.setAttribute('class', 'card-body');
     var h5 = document.createElement('h5');
@@ -115,6 +147,7 @@ function addBody(data, cardMd) {
 
     text.innerHTML += "<strong>" + data.Baths + "</strong> ba &nbsp;|&nbsp;";
 
+    console.log(data.MinSize);
     if (data.MinSize === 0) {
         text.innerHTML += "<strong>Unlisted</strong> sqft";
     }
@@ -122,7 +155,7 @@ function addBody(data, cardMd) {
         text.innerHTML += "<strong>" + addCommas(data.MinSize) + "</strong> sqft";
     }
     else {
-        "<strong>" + addCommas(data.MinSize) + " - " + addCommas(data.MaxSize) + "</strong> sqft";
+        text.innerHTML += "<strong>" + addCommas(data.MinSize) + " - " + addCommas(data.MaxSize) + "</strong> sqft";
     }
 
     body.appendChild(text);

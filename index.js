@@ -10,6 +10,8 @@ const port = 8080;
 var ejs = require('ejs');
 var cors = require('cors');
 var multer = require('multer');
+var nodemailer = require('nodemailer');
+var helmet = require('helmet');
 
 
 const storage = multer.diskStorage({
@@ -17,7 +19,7 @@ const storage = multer.diskStorage({
         cb(null, 'public/uploads/');
     },
     filename: function(req, file, cb) {
-        cb(null, new Date().toISOString() + file.originalname);
+        cb(null, new Date().toISOString() + file.originalname.replace(',',''));
     }
 });
 
@@ -27,11 +29,20 @@ var pool = mysql.createPool({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
     password: process.env.DB_PASS,
-    database: process.env.DB_NAME
+    database: process.env.DB_NAME,
+    multipleStatements: true
 });
 
+var transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: process.env.USER_EMAIL,
+      pass: process.env.USER_PASSWORD
+    }
+  });
 
 app.use(express.json());
+app.use(helmet());
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set('view engine', 'ejs');
@@ -42,42 +53,101 @@ app.use(express.static(__dirname + '/public'));
 app.get('/', (req, res) => {
 });
 
-app.get('/search/beds=:beds/baths=:baths/price=:price/size=:size/aptName=:apartmentName/:page?', (req, res) => {
-    var query = assembleQuery(req.params.beds, req.params.baths, req.params.price, req.params.size, req.params.apartmentName);
-    var path = req.path.substring(0, req.path.lastIndexOf("]") + 1);
+app.get('/search', (req, res) => {
+    var beds = (req.query.beds) ? req.query.beds.split(',') : [];
+    var baths = (req.query.baths) ? req.query.baths.split(',') : [];
+    var prices = (req.query.price) ? req.query.price.split(',') : [];
+    var sizes = (req.query.size) ? req.query.size.split(',') : [];
+    if (req.query.name){
+        req.query.name = decodeURI(req.query.name);
+        req.query.name = req.query.name.replace(/'/g, "");
+    }
+    var names = (req.query.name) ? req.query.name.split(',') : [];
+
+    if (req.query.sort === "Price")
+        req.query.sort = "MinPrice";
+    if (req.query.sort === "Size")
+        req.query.sort = "MinSize";
+
+    var query = assembleQuery(beds, baths, prices, sizes, names);
+    var queryArr = query[1];
+    query = query[0];
+
+    if (req.query.sort) {
+        query += " ORDER BY " + req.query.sort + " asc";
+    }
+
+    var path; 
+    if (req.url.indexOf("page=") !== -1) {
+        path = req.url.substring(0, req.url.lastIndexOf("page="));
+    }
+
+    else {
+        if (req.url.indexOf("?") !== -1) {
+            path = req.url + "&";
+        }
+        else path = req.url + "?";
+    }
+
     const limit = 12;
-    const page = req.params.page || 1;
+    const page = req.query.page || 1;
+
     const offset = (page - 1) * limit;
-    query += " LIMIT " + limit + " OFFSET " + offset;
+    query += " LIMIT ? OFFSET ?";
+    var arr = [limit, offset];
+    queryArr.push.apply(queryArr, arr);
     pool.getConnection(function(err, connection) {
         if (err) throw err;
-        connection.query(query, function (err, result, fields) {
-            if (err) throw err;
+        connection.query(query, queryArr, function (err, result, fields) {
+            if (err) console.log(err);
+            var numPages;
+            if (result && result.length > 0)
+                numPages = Math.ceil(result[0].full_count / parseFloat(limit));
+            else numPages = 0;
             
-            res.render('display', {data: result, currentPage: page, pages: 16, path: path});
+            res.render('display', {data: result, currentPage: parseInt(page), pages: numPages, path: path, sortBy: req.query.sort});
             connection.release();
           });
     });
 });
 
-app.get('/search/beds=:beds/baths=:baths/price=:price/size=:size/aptName=:apartmentName/sort=:sortBy/order=:order/:page?', (req, res) => {
-    var query = assembleQuery(req.params.beds, req.params.baths, req.params.price, req.params.size, req.params.apartmentName);
-    if (req.params.sortBy === "Price")
-        req.params.sortBy = "MinPrice";
-    if (req.params.sortBy === "Size")
-        req.params.sortBy = "MinSize";
-    console.log(req.params.sortBy);
-    query += " ORDER BY " + req.params.sortBy + " " + req.params.order;
-    pool.getConnection(function(err, connection) {
-        if (err) throw err;
-        connection.query(query, function (err, result, fields) {
-            if (err) throw err;
-            
-            res.render('display', {data: result});
-            connection.release();
-          });
-    });
+app.use(function(e, req, res, next) {
+    if (e.message === "Bad request") {
+        res.status(400).json({error: {msg: e.message, stack: e.stack}});
+    }
 });
+
+// app.get('/search/:beds/:baths/:price/:size/:apartmentName/:sortBy/:order/:page?', (req, res) => {
+
+//     var query = assembleQuery(req.params.beds, req.params.baths, req.params.price, req.params.size, req.params.apartmentName);
+//     var path = req.path.substring(0, req.path.lastIndexOf("]") + 1);
+//     const limit = 12;
+//     const page = req.params.page || 1;
+//     const offset = (page - 1) * limit;
+//     if (req.params.sortBy === "Price")
+//         req.params.sortBy = "MinPrice";
+//     if (req.params.sortBy === "Size")
+//         req.params.sortBy = "MinSize";
+
+//     req.params.order = req.params.order.replace("[", "");
+//     req.params.order = req.params.order.replace("]", "");
+
+//     query += " ORDER BY " + req.params.sortBy + " " + req.params.order + " LIMIT ? OFFSET ?";
+//     var sortBy = [limit, offset];
+//     pool.getConnection(function(err, connection) {
+//         if (err) throw err;
+//         connection.query(query, sortBy, function (err, result, fields) {
+//             if (err) throw err;
+//             var numPages;
+//             if (result.length > 0)
+//                 numPages = Math.ceil(result[0].full_count / parseFloat(limit));
+//             else numPages = 0;
+
+//             res.render('display', {data: result, currentPage: parseInt(page), pages: numPages, path: path, sortBy: req.params.sortBy});
+//             connection.release();
+//           });
+//     });
+// });
 
 
 app.get('/search/favorites', (req, res) => {
@@ -85,10 +155,11 @@ app.get('/search/favorites', (req, res) => {
         res.send([]);
         return;
     }
-    var query = getFavorites(req.query.data);
+    var query = getFavorites(req.query.data)[0];
+    var arr = getFavorites(req.query.data)[1];
     pool.getConnection(function(err, connection) {
         if (err) throw err;
-        connection.query(query, function (err, result, fields) {
+        connection.query(query, arr, function (err, result, fields) {
             if (err) throw err;
             
             res.send(result);
@@ -106,8 +177,9 @@ app.post('/furniture', upload.single('furnitureImage'), (req, res) => {
         file = 'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcSADPzrYm_hQg2XMNc_9KTr9Axmn35s0DbsIQ&usqp=CAU';
     }
 
-    var query = `INSERT INTO furniture_data(ProductName, ProductPrice, ProductDescription, Author, University, Date, Email, Image) \
-VALUES(?, ?, ?, ?, ?, ?, ?, ?)`;
+    var private = Math.random().toString(36).slice(2);
+    var query = `INSERT INTO furniture_data(ProductName, ProductPrice, ProductDescription, Author, University, Date, Email, Image, PublicID, PrivateID) \
+VALUES(?, ?, ?, ?, ?, ?, ?, ?, UUID(), CONCAT('${private}', UUID()))`;
     var arr = [req.body.name, req.body.price, req.body.description, req.body.author, req.body.university, 
         req.body.dateTime, req.body.email, file];
     pool.getConnection(function(err, connection) {
@@ -121,73 +193,507 @@ VALUES(?, ?, ?, ?, ?, ?, ?, ?)`;
 });
 
 app.get('/furniture', (req, res) => {
-    var query = "SELECT * FROM furniture_data";
+    var query = "SELECT * FROM furniture_data ORDER BY DATE desc";
     pool.getConnection(function(err, connection) {
         if (err) throw err;
         connection.query(query, function (err, result, fields) {
             if (err) throw err;
-            res.render('furniture', {data: result, diff: timeDifference});
+            res.render('furniture', {data: result, diff: timeDifference, path: req.path});
             connection.release();
-        })
-    })
+        });
+    });
+});
+
+
+app.get('/furniture/posts/:id', (req, res) => {
+    var query = `SELECT * FROM furniture_data WHERE PublicID=?`;
+    var id = req.params.id;
+    pool.getConnection(function(err, connection) {
+        if (err) throw err;
+        connection.query(query, id, function (err, result, fields) {
+            if (err) throw err;
+            res.render('furniture-post', {data: result, diff: timeDifference, path: req.path});
+            connection.release();
+        });
+    });
+});
+
+
+app.post('/email-furniture', (req, res) => {
+    var query = `SELECT Email FROM furniture_data WHERE PublicID=?`;
+    var id = req.body.id;
+
+    pool.getConnection(function(err, connection) {
+        if (err) throw err;
+        connection.query(query, id, function (err, result, fields) {
+            if (err) throw err;
+            var mailOptions = {
+                from: process.env.USER_EMAIL,
+                to: result[0].Email,
+                subject: req.body.name + ' is interested in buying your furniture!',
+                text: 'A student from ' + req.body.university + ' is interested in your furniture and sent you the following message.' +
+                '\n' + req.body.description + '\n' + 'Contact this person back: ' + req.body.email
+              };
+
+            transporter.sendMail(mailOptions, function(error, info){
+            if (error) {
+                console.log(error);
+            } else {
+                console.log('Email sent: ' + info.response);
+                res.send('Successful');
+            }
+            });
+        });
+        var updateInterested = "UPDATE furniture_data SET NumInterested = NumInterested + 1 WHERE PublicID=?";
+        connection.query(updateInterested, id, function (err, result, fields) {
+            if (err) throw err;
+            connection.release();
+        });
+    });
+});
+
+app.get('/furniture/posts/search/:search', (req, res) => {
+    req.params.search = "%" + req.params.search + "%";
+    var query = `SELECT * FROM furniture_data WHERE ProductName LIKE ? OR ProductDescription LIKE ? OR University LIKE ? ORDER BY DATE desc`;
+    var arr = [req.params.search, req.params.search, req.params.search];
+    pool.getConnection(function(err, connection) {
+        if (err) throw err;
+        connection.query(query, arr, function (err, result, fields) {
+            if (err) throw err;
+            res.render('furniture', {data: result, diff: timeDifference, path: req.path});
+            connection.release();
+        });
+    });
+});
+
+
+app.get('/furniture/posts/delete/:publicId/:privateId', (req, res) => {
+    var queryFindImage = `SELECT Image FROM furniture_data WHERE PublicID=? AND PrivateID=?`;
+    var query = `DELETE FROM furniture_data WHERE PublicID=? AND PrivateID=?`;
+    var arr = [req.params.publicId, req.params.privateId];
+    var img;
+    pool.getConnection(function(err, connection) {
+        if (err) throw err;
+        connection.query(queryFindImage, arr, function(err, result, fields) {
+            if (err) throw err;
+            if (result.affectedRows === 0) {
+                img = null;
+            }
+            else img = result[0].Image;
+        });
+
+        connection.query(query, arr, function(err, result, fields) {
+            if (err) throw err;
+            if (result.affectedRows === 0) {
+                res.status(404).send("<h1>The post you requested does not exist. </h1>");
+            }
+            else {
+                if (img && img !== 'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcSADPzrYm_hQg2XMNc_9KTr9Axmn35s0DbsIQ&usqp=CAU') {
+                    fs.unlink('public' + img, (err) => {
+                        if (err) {
+                            console.log("failed to delete local image:"+err);
+                        } 
+                        else {
+                            console.log('successfully deleted local image');                                
+                        }
+                    });
+                }
+                res.send("<h1>The post was successfully deleted. </h1>");
+            }
+            connection.release();
+
+        });
+    });
+
+});
+
+
+app.post('/furniture/report', (req, res) => {
+    var publicId = req.body.publicID;
+    var name = req.body.name;
+    var price = req.body.price;
+    var university = req.body.university;
+    var mailOptions = {
+        from: process.env.USER_EMAIL,
+        to: process.env.USER_EMAIL,
+        subject: 'User reported a furniture post with ID ' + publicId,
+        text: `A user reported a furniture post titled '${name}' that costs $${price}. The \
+        post was made by a student from ${university}. Take a look and decide if it is necessary to take it down!`
+    };
+
+    transporter.sendMail(mailOptions, function(error, info){
+        if (error) {
+            console.log(error);
+        } else {
+            console.log('Email sent: ' + info.response);
+            res.send('Successful');
+        }
+    });
 })
+
+app.post('/sublet', upload.array('unitImages', 6), (req, res) => {
+    var files = [];
+    if (!(req.files && req.files.length > 0)){
+        files = ['https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcSADPzrYm_hQg2XMNc_9KTr9Axmn35s0DbsIQ&usqp=CAU'];
+    }
+    for (let i = 0; i < req.files.length; ++i) {
+        if (req.files[i] && req.files[i].path){
+            files.push(req.files[i].path.substring(req.files[i].path.indexOf('public')+6));
+        }
+    }
+
+    var private = Math.random().toString(36).slice(2);
+    var inserts = insertImages(files.length);
+var query = 
+`SET @recentUUID = UUID(); \
+START TRANSACTION; \
+INSERT INTO sublet_data(UnitName, UnitBeds, UnitBaths, UnitPrice, UnitDescription, Furnished, University, ApartmentName, AptWebsite, Gender, Duration, StartDate, EndDate, \
+Date, Email, PublicID, PrivateID) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, @recentUUID, CONCAT('${private}', @recentUUID)); \
+${inserts}; \
+COMMIT;`;
+    var arr = [req.body.name, req.body.beds, req.body.baths, req.body.rent, req.body.description, req.body.furnished, req.body.university, req.body.complex, req.body.website, req.body.gender,
+        req.body.duration, req.body.startDate, req.body.endDate, req.body.dateTime, req.body.email];
+    arr.push.apply(arr, files);
+    pool.getConnection(function(err, connection) {
+        if (err) throw err;
+        connection.query(query, arr, function (err, result, fields) {
+            if (err) console.log(err);
+            res.send("Successful");
+            connection.release();
+        });
+    });
+});
+
+
+app.get('/sublet', (req, res) => {
+    var query = "SELECT sublet_data.*, (SELECT GROUP_CONCAT(sublet_images.ImageName) \
+    FROM sublet_images WHERE sublet_images.PublicID = sublet_data.PublicID) AS allImages FROM sublet_data ORDER BY Date desc";
+
+    pool.getConnection(function(err, connection) {
+        if (err) throw err;
+        connection.query(query, function (err, result, fields) {
+            if (err) throw err;
+            res.render('sublet', {data: result, diff: timeDifference, path: req.path});
+            connection.release();
+        });
+    });
+});
+
+app.get('/sublet/posts/:id', (req, res) => {
+    var query = "SELECT sublet_data.*, (SELECT GROUP_CONCAT(sublet_images.ImageName) \
+    FROM sublet_images WHERE sublet_images.PublicID = sublet_data.PublicID) AS allImages FROM sublet_data \
+    WHERE sublet_data.PublicID=? ORDER BY Date desc"
+    var publicId = req.params.id;
+    pool.getConnection(function(err, connection) {
+        if (err) throw err;
+        connection.query(query, publicId, function (err, result, fields) {
+            if (err) throw err;
+            res.render('sublet', {data: result, diff: timeDifference, path: req.path});
+            connection.release();
+        });
+    });
+});
+
+app.get('/sublet/posts/search/:search', (req, res) => {
+    req.params.search = "%" + req.params.search + "%";
+    var query = "SELECT sublet_data.*, (SELECT GROUP_CONCAT(sublet_images.ImageName) \
+    FROM sublet_images WHERE sublet_images.PublicID = sublet_data.PublicID) AS allImages FROM sublet_data \
+    WHERE UnitName LIKE ? OR UnitDescription LIKE ? OR University LIKE ? OR Gender LIKE ? ORDER BY Date desc"
+    var arr = [req.params.search, req.params.search, req.params.search, req.params.search];
+    pool.getConnection(function(err, connection) {
+        if (err) throw err;
+        connection.query(query, arr, function (err, result, fields) {
+            if (err) throw err;
+            res.render('sublet', {data: result, diff: timeDifference, path: req.path});
+            connection.release();
+        });
+    });
+});
+
+app.post('/email-sublet', (req, res) => {
+    var query = `SELECT Email FROM sublet_data WHERE PublicID=?`;
+    var id = req.body.id;
+
+    pool.getConnection(function(err, connection) {
+        if (err) throw err;
+        connection.query(query, id, function (err, result, fields) {
+            if (err) throw err;
+            var mailOptions = {
+                from: process.env.USER_EMAIL,
+                to: result[0].Email,
+                subject: req.body.name + ' is interested in subleasing your apartment!',
+                text: 'A student from ' + req.body.university + ' is interested in your apartment unit and sent you the following message.' +
+                '\n' + req.body.description + '\n' + 'Contact this person back: ' + req.body.email
+              };
+
+            transporter.sendMail(mailOptions, function(error, info){
+            if (error) {
+                console.log(error);
+            } else {
+                console.log('Email sent: ' + info.response);
+                res.send('Successful');
+            }
+        });
+    });
+        var updateInterested = "UPDATE sublet_data SET NumInterested = NumInterested + 1 WHERE PublicID=?";
+        connection.query(updateInterested, id, function (err, result, fields) {
+            if (err) throw err;
+            connection.release();
+        });
+    });
+
+});
+
+app.post('/sublet/report', (req, res) => {
+    var publicId = req.body.publicID;
+    var beds = req.body.beds;
+    var baths = req.body.baths;
+    var startDate = req.body.startDate;
+    var endDate = req.body.endDate;
+    var university = req.body.university;
+    var mailOptions = {
+        from: process.env.USER_EMAIL,
+        to: process.env.USER_EMAIL,
+        subject: 'User reported a subletting post with ID ' + publicId,
+        text: `A user reported a subletting post for ${beds} bedrooms and ${baths} bathrooms \
+        with a start date of ${startDate} and end date of ${endDate}, made by a student from ${university}. Take a look and decide if it is necessary to take it down!`
+    };
+
+    transporter.sendMail(mailOptions, function(error, info){
+        if (error) {
+            console.log(error);
+        } else {
+            console.log('Email sent: ' + info.response);
+            res.send('Successful');
+        }
+    });
+})
+
+
+app.get('/sublet/posts/delete/:publicId/:privateId', (req, res) => {
+    var queryFindImage = `SELECT (SELECT GROUP_CONCAT(sublet_images.ImageName) FROM sublet_images WHERE sublet_images.PublicID = sublet_data.PublicID) AS allImages FROM sublet_data \
+    WHERE sublet_data.PublicID=? AND PrivateID=?`;
+    var query = `DELETE FROM sublet_data WHERE PublicID=? AND PrivateID=?`;
+    var arr = [req.params.publicId, req.params.privateId];
+    var img;
+    pool.getConnection(function(err, connection) {
+        if (err) throw err;
+        connection.query(queryFindImage, arr, function(err, result, fields) {
+            if (err) throw err;
+            if (result.affectedRows === 0) {
+                img = null;
+            }
+            else img = result[0].allImages;
+        });
+
+        connection.query(query, arr, function(err, result, fields) {
+            if (err) throw err;
+            if (result.affectedRows === 0) {
+                res.status(404).send("<h1>The post you requested does not exist. </h1>");
+            }
+            else {
+                if (img && img !== 'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcSADPzrYm_hQg2XMNc_9KTr9Axmn35s0DbsIQ&usqp=CAU') {
+                    img = img.split(',');
+                    for (let i = 0; i < img.length; ++i) {
+                        fs.unlink('public' + img[i], (err) => {
+                            if (err) {
+                                console.log("failed to delete local image:"+err);
+                            } 
+                            else {
+                                console.log('successfully deleted local image');                                
+                            }
+                        });
+                    }
+                }
+                res.send("<h1>The post was successfully deleted. </h1>");
+            }
+            connection.release();
+
+        });
+    });
+
+});
+
+
+
+// app.get('/furniture/posts/delete/:publicId/:privateId', (req, res) => {
+//     var queryFindImage = `SELECT Image FROM furniture_data WHERE PublicID=? AND PrivateID=?`;
+//     var query = `DELETE FROM furniture_data WHERE PublicID=? AND PrivateID=?`;
+//     var arr = [req.params.publicId, req.params.privateId];
+//     var img;
+//     pool.getConnection(function(err, connection) {
+//         if (err) throw err;
+//         connection.query(queryFindImage, arr, function(err, result, fields) {
+//             if (err) throw err;
+//             if (result.affectedRows === 0) {
+//                 img = null;
+//             }
+//             else img = result[0].Image;
+//         });
+
+//         connection.query(query, arr, function(err, result, fields) {
+//             if (err) throw err;
+//             if (result.affectedRows === 0) {
+//                 res.status(404).send("<h1>The post you requested does not exist. </h1>");
+//             }
+//             else {
+//                 if (img && img !== 'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcSADPzrYm_hQg2XMNc_9KTr9Axmn35s0DbsIQ&usqp=CAU') {
+//                     fs.unlink('public' + img, (err) => {
+//                         if (err) {
+//                             console.log("failed to delete local image:"+err);
+//                         } 
+//                         else {
+//                             console.log('successfully deleted local image');                                
+//                         }
+//                     });
+//                 }
+//                 res.send("<h1>The post was successfully deleted. </h1>");
+//             }
+//             connection.release();
+
+//         });
+//     });
+
+// });
+
+
 function getFavorites(data) {
     var query;
     if (data.length > 0) {
-        query = "SELECT * FROM apartment_data WHERE ";
+        query = "SELECT apartment_data.*, complex_data.* FROM apartment_data, complex_data WHERE (";
     }
     else return null;
 
+    var arr = [];
     for (let i = 0; i < data.length; ++i) {
         if (i !== 0) {
             query += " OR ";
         }
-        query += "(Name='" + data[i].name + "' AND Apartment='" + data[i].aptName + "')";
+        query += "(apartment_data.Name=? AND Apartment=?)";
+        arr.push(data[i].name, data[i].aptName);
     }
 
-    return query;
+    query += ") AND (apartment_data.AptID=complex_data.ID)";
+    return [query, arr];
 }
 
 function assembleQuery(beds, baths, prices, sizes, names) {
     var atLeastOne = 0;
+    var arr = [];
     var bed="", bath="", price="", size="", name="";
-    if (beds === '[]' && baths === '[]' && prices === '[]' && sizes === '[]' && names === '[]')
-        return "SELECT * FROM apartment_data";
+    if (beds.length === 0 && baths.length === 0 && prices.length === 0 && sizes.length === 0 && names.length === 0)
+        return ["SELECT apartment_data.*, count(*) OVER() AS full_count, complex_data.* FROM apartment_data, complex_data WHERE apartment_data.AptID=complex_data.ID", arr];
 
-    if (beds !== '[]') {
+    if (beds.length !== 0) {
         atLeastOne = 1;
-        bed = "Beds IN (" + beds.substring(1, beds.length-1) + ")";
+        bed = "Beds IN (";
+        for (let i = 0; i < beds.length; ++i) {
+            if (i !== 0) {
+                bed += ",";
+            }
+            bed += "?";
+            arr.push(beds[i]);
+        }
+        bed += ")";
     }
 
-    if (baths !== '[]') {
+    if (baths.length !== 0) {
         if (atLeastOne)
             bath = " AND ";
-        bath += "Baths IN (" + baths.substring(1, baths.length-1) + ")";
+        atLeastOne = 1;
+        bath += "Baths IN (";
+
+        for (let i = 0; i < baths.length; ++i) {
+            if (i !== 0) {
+                bath += ",";
+            }
+            bath += "?";
+            arr.push(baths[i]);
+        }
+        bath += ")";
     }
 
-    if (prices !== '[]'){
+    if (prices.length !== 0){
         if (atLeastOne)
             price = " AND ";
-        price += "Price IN (" + prices.substring(1, prices.length-1) + ")";
+        atLeastOne = 1;
+        price += "(MinPrice BETWEEN ";
+        if (prices.length === 1) {
+            price += "? AND ?)";
+            arr.push(prices[0]);
+            arr.push(prices[0]);
+        }
+        else {
+            price += "? AND ?";
+            arr.push(prices[0]);
+            arr.push(prices[1]);
+        }
+
+        price += ")";
+        atLeastOne = 1;
     }
 
-    if (sizes !== '[]') {
+    if (sizes.length !== 0) {
         if (atLeastOne)
             size = " AND ";
-        size += "Size IN (" + sizes.substring(1, sizes.length-1) + ")";
+
+        size += "(MinSize BETWEEN ";
+
+        if (sizes.length === 1) {
+            size += "? AND ?)";
+            arr.push(sizes[0]);
+            arr.push(sizes[0]);
+        }
+        else {
+            size += "? AND ?)";
+            arr.push(sizes[0]);
+            arr.push(sizes[1]);
+        }
+
+        size += ")";
+        atLeastOne = 1;
     }
 
-    if (names !== '[]') {
+    if (names.length !== 0) {
         if (atLeastOne)
             name = " AND ";
-        name += "Apartment IN (" + names.substring(1, names.length-1) + ")";
+        atLeastOne = 1;
+        name += "Apartment IN (";
+
+        for (let i = 0; i < names.length; ++i) {
+            if (i !== 0) {
+                name += ",";
+            }
+            name += "?";
+            arr.push(names[i]);
+        }
+        name += ")";
     }
 
-    var query = "SELECT * FROM apartment_data WHERE " + bed + bath + price + size + name;
-    return query;
+    var query = "SELECT apartment_data.*, count(*) OVER() AS full_count, complex_data.* FROM apartment_data, complex_data WHERE (apartment_data.AptID=complex_data.ID) AND " + bed + bath + price + size + name;
+    //var query = "SELECT * FROM apartment_data WHERE " + bed + bath + price + size + name;
+    return [query, arr];
 }
 
+//The 404 Route (ALWAYS Keep this as the last route)
+app.get('*', function(req, res){
+    res.status(404).send("DID NOT FIND ANYTHING");
+  });
 
+function insertImages(num) {
+    var query = "INSERT INTO sublet_images(PublicID, ImageName)";
+    for (let i = 0; i < num; ++i) {
+        if (i === 0) {
+            query += " VALUES (";
+        }
+        else if (i !== 0){
+            query += ", (";
+        }
+        query += "@recentUUID, ?)";
+    }
+    return query;
+}
+  
 function timeDifference(current, previous) {
 
     var msPerMinute = 60 * 1000;
@@ -199,7 +705,7 @@ function timeDifference(current, previous) {
     var elapsed = current - previous;
 
     if (elapsed < msPerMinute) {
-        var check = Math.round(elapsed/1000);
+        var check = Math.floor(elapsed/1000);
         if (check === 1){
             return check + ' second ago';
         }
@@ -209,7 +715,7 @@ function timeDifference(current, previous) {
     }
 
     else if (elapsed < msPerHour) {
-        var check = Math.round(elapsed/msPerMinute);
+        var check = Math.floor(elapsed/msPerMinute);
         if (check === 1) {
             return check + ' minute ago';
         }
@@ -219,7 +725,7 @@ function timeDifference(current, previous) {
     }
 
     else if (elapsed < msPerDay ) {
-        var check = Math.round(elapsed/msPerHour);
+        var check = Math.floor(elapsed/msPerHour);
         if (check === 1) {
             return check + ' hour ago';
         }
@@ -229,41 +735,35 @@ function timeDifference(current, previous) {
     }
 
     else if (elapsed < msPerMonth) {
-        var check = Math.round(elapsed/msPerDay);
+        var check = Math.floor(elapsed/msPerDay);
         if (check === 1) {
-            return 'approximately ' + check + ' day ago';   
+            return check + ' day ago';   
         }
         else {
-            return 'approximately ' + check + ' days ago';   
+            return check + ' days ago';   
         }  
     }
 
     else if (elapsed < msPerYear) {
-        var check = Math.round(elapsed/msPerMonth)
+        var check = Math.floor(elapsed/msPerMonth)
         if (check === 1) {
-            return 'approximately ' + check + ' month ago';   
+            return check + ' month ago';   
         }
         else {
-            return 'approximately ' + check + ' months ago';   
+            return check + ' months ago';   
         }  
     }
 
     else {
-        var check = Math.round(elapsed/msPerYear);
+        var check = Math.floor(elapsed/msPerYear);
         if (check === 1) {
-            return 'approximately ' + check + ' year ago';   
+            return check + ' year ago';   
         }
         else {
-            return 'approximately ' + check + ' years ago';   
+            return check + ' years ago';   
         }    
     }
 }
 
 
-app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`))
-
-
-
-
-
-
+app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`));
