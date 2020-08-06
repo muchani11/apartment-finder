@@ -5,7 +5,7 @@ $(".tiptext").mouseover(function() {
 });
 var beds = tail.select(".bedrooms-display",{
 
-    width: '200px',
+    width: '165px',
   
     // custom placeholder
     placeholder: "Bedrooms",
@@ -83,7 +83,7 @@ var beds = tail.select(".bedrooms-display",{
   });
   
   var baths = tail.select(".bathrooms-display",{
-    width: '200px',
+    width: '165px',
     placeholder: "Bathrooms",
     deselect: true,
     animate: true,
@@ -136,14 +136,86 @@ var beds = tail.select(".bedrooms-display",{
     cbEmpty: undefined
   });
 
+  var sort = tail.select(".sort-display",{
+    width: '150px',
+    placeholder: "Sort Units...",
+    deselect: true,
+    animate: true,
+    openAbove: null,
+    stayOpen: false,
+    multiple: false,
+    multiLimit: Infinity,
+    multiPinSelected: false, 
+    descriptions: false,
+    sourceHide: true, 
+    search: true,
+    searchFocus: false,
+    searchMarked: true,
+    searchMinLength: 0,  
+    searchDisabled: true,
+    hideSelect: true,
+    cbLoopItem: undefined,
+    cbLoopGroup: undefined,
+    cbComplete: undefined,
+    cbEmpty: undefined
+  });
+  
+  var searches = document.getElementsByClassName('search-input');
+  for (let i = 0; i < searches.length; ++i) {
+    searches[i].setAttribute('placeholder', 'Search');
+  }
+  
+  $( function() {
+    $( "#slider-range-price" ).slider({
+      range: true,
+      min: 0,
+      max: 2500,
+      values: [ 0, 2500 ],
+      animate: 'fast',
+      slide: function( event, ui ) {
+        $( "#amount-price" ).val( "$" + ui.values[ 0 ] + " - $" + ui.values[ 1 ] );
+      }
+    });
+    $( "#amount-price" ).val( "$" + $( "#slider-range-price" ).slider( "values", 0 ) +
+      " - $" + $( "#slider-range-price" ).slider( "values", 1 ) );
+  } );
+  
+  $( function() {
+    $( "#slider-range-size" ).slider({
+      range: true,
+      min: 0,
+      max: 2500,
+      values: [ 0, 2500 ],
+      animate: 'fast',
+      slide: function( event, ui ) {
+        $( "#amount-size" ).val( ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+      }
+    });
+    $( "#amount-size" ).val($( "#slider-range-size" ).slider( "values", 0 ) +
+      " - " + $( "#slider-range-size" ).slider( "values", 1 ) );
+  } );
+  
+  
+  $('.price-size-menu').on('click', function(event) {
+    event.stopPropagation();
+  });
 
 function getData() {
     var bedrooms = beds.select.getElementsByClassName('selected');
     var bathrooms = baths.select.getElementsByClassName('selected');
-    var prices = [];
-    var sizes = [];
+    var prices = $("#slider-range-price").slider("option", "values");
+    var sizes = $("#slider-range-size").slider("option", "values");
     var names = apartments.select.getElementsByClassName('selected');
   
+    if (prices[0] == $("#slider-range-price").slider("option", "min") && prices[1] == $("#slider-range-price").slider("option", "max")) {
+      prices = [];
+    }
+  
+    if (sizes[0] == $("#slider-range-size").slider("option", "min") && sizes[1] && $("#slider-range-size").slider("option", "max")) {
+      sizes = [];
+    }
+
+
   //   $("input:checkbox[name=beds]:checked").each(function(){
   //     beds.push($(this).parent().text().trim());
   // });
@@ -184,7 +256,7 @@ function getData() {
         var sizeData = "";
         var nameData = "";
         var atLeastOne = false;
-        var url = "http://localhost:8080/search";
+        var url = "/search";
       
         for (let i = 0; i < bedrooms.length; ++i) {
           var temp = bedrooms[i].dataset.key;
@@ -315,6 +387,26 @@ function closeModal() {
     }
     });
 
+    $(".flag.fa").click(function() {
+      if ($(this).attr('class').indexOf('fa-flag-o') !== -1) {
+        toastr.options.timeOut = 6000;
+        toastr.info("Thank you for reporting this listing as inaccurate. We will take a look into it!");
+        var url = '/search/report';
+        var data = {name: $(this).attr('name'), apt: $(this).attr('apt'), beds: $(this).attr('beds'), baths: $(this).attr('baths')};
+
+        $.ajax({
+          url: url,
+          type: 'POST',
+          data: data,
+          success: function(res) {
+          }
+      });
+      }
+     
+      $(this).attr('class', 'flag fa fa-flag');
+      $(this).css('color', 'red');
+      });
+
 function favoriteUnit(name, apartment) {
     localStorage.setItem(name + "?" + apartment, 'favorited');
     }
@@ -326,6 +418,12 @@ function unFavoriteUnit(name, apartment) {
 
 function sortData() {
     var chosen = $('#sort :selected').text();
+    
+    if (!chosen || chosen == '') {
+      toastr.options.timeOut = 5000;
+      toastr.error('Please select a category to sort these items by.');
+      return;
+    }
     var option = chosen.substring(0, chosen.indexOf(" "));
 
     var currUrl;

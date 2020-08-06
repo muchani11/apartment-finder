@@ -1,51 +1,103 @@
 <!DOCTYPE html>
 <html lang="en-US">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Leazy is a portal for UT Austin students where you can find ideal apartments fitting various categories, trade furniture, and sublease.">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="author" content="Madhavan Uchani">
+    <meta name="author" content="Aryan Gandhi">
+    <meta name="keywords" content="Leasing, UT Austin, Austin area, West Campus, Apartment, Sublease, Furniture, Student, Housing, Living, College, Bedrooms, Bathrooms, Square Feet">
+    <title>Leazy - Student Leasing, Subleasing, and Furniture Trading</title>
+    <link rel="icon" href="/images/titlelogo.png">
+  </head>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/tail.select@0.5.15/js/tail.select.js"></script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tail.select@0.5.15/css/default/tail.select-dark.css">
-
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.2/js/toastr.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tail.select@0.5.15/css/default/tail.select-light-feather.css">
+  
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
   <link href="/css/styles.css" rel="stylesheet" type="text/css">
       <nav class="navbar navbar-expand-md navbar-light bg-light">
-        <a class="navbar-brand" href="#">Navbar</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="/">Home</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="/favorites.html">Favorites</a>
-              </li>
+        <div class="container">
+          <a href="/" class="navbar-brand">
+            <img class="logo" src="/images/logohorizontal.png">
+          </a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+              <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+              <ul class="navbar-nav ml-auto">
+                  <li class="nav-item">
+                      <a class="nav-link" href="/">Home</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="/favorites.html">Favorites</a>
+                  </li>
+  
+                  <li class="nav-item">
+                    <a class="nav-link" href="/sublet">Sublet</a>
+                  </li>
+                  <li class="nav-item">
+                      <a class="nav-link" href="/furniture">Furniture</a>
+                  </li>
 
-                <li class="nav-item">
-                  <a class="nav-link" href="/sublet">Sublet</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/furniture">Furniture</a>
-                </li>
-            </ul>
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Contact Us</a>
-                </li>
-            </ul>
+                  <li class="nav-item">
+                    <a class="nav-link" href="mailto:leazyhelp@gmail.com">Contact Us</a>
+                  </li>
+
+                  <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      Share
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                      <a class="dropdown-item socialMedia" href="#">
+                        <div class="social">
+                          <svg viewBox="0 0 64 64" width="32" height="32"><circle cx="32" cy="32" r="31" fill="#3b5998"></circle><path d="M34.1,47V33.3h4.6l0.7-5.3h-5.3v-3.4c0-1.5,0.4-2.6,2.6-2.6l2.8,0v-4.8c-0.5-0.1-2.2-0.2-4.1-0.2 c-4.1,0-6.9,2.5-6.9,7V28H24v5.3h4.6V47H34.1z" fill="white"></path></svg>
+                          Facebook
+                        </div>
+                      </a>
+
+                      <a class="dropdown-item socialMedia" href="#">
+                        <div class="social">
+                          <svg viewBox="0 0 64 64" width="32" height="32"><circle cx="32" cy="32" r="31" fill="#00aced"></circle><path d="M48,22.1c-1.2,0.5-2.4,0.9-3.8,1c1.4-0.8,2.4-2.1,2.9-3.6c-1.3,0.8-2.7,1.3-4.2,1.6 C41.7,19.8,40,19,38.2,19c-3.6,0-6.6,2.9-6.6,6.6c0,0.5,0.1,1,0.2,1.5c-5.5-0.3-10.3-2.9-13.5-6.9c-0.6,1-0.9,2.1-0.9,3.3 c0,2.3,1.2,4.3,2.9,5.5c-1.1,0-2.1-0.3-3-0.8c0,0,0,0.1,0,0.1c0,3.2,2.3,5.8,5.3,6.4c-0.6,0.1-1.1,0.2-1.7,0.2c-0.4,0-0.8,0-1.2-0.1 c0.8,2.6,3.3,4.5,6.1,4.6c-2.2,1.8-5.1,2.8-8.2,2.8c-0.5,0-1.1,0-1.6-0.1c2.9,1.9,6.4,2.9,10.1,2.9c12.1,0,18.7-10,18.7-18.7 c0-0.3,0-0.6,0-0.8C46,24.5,47.1,23.4,48,22.1z" fill="white"></path></svg>
+                          Twitter
+                        </div>
+                      </a>
+
+                      <a class="dropdown-item socialMedia" href="#">
+                        <div class="social">
+                          <svg viewBox="0 0 64 64" width="32" height="32"><circle cx="32" cy="32" r="31" fill="#007fb1"></circle><path d="M20.4,44h5.4V26.6h-5.4V44z M23.1,18c-1.7,0-3.1,1.4-3.1,3.1c0,1.7,1.4,3.1,3.1,3.1 c1.7,0,3.1-1.4,3.1-3.1C26.2,19.4,24.8,18,23.1,18z M39.5,26.2c-2.6,0-4.4,1.4-5.1,2.8h-0.1v-2.4h-5.2V44h5.4v-8.6 c0-2.3,0.4-4.5,3.2-4.5c2.8,0,2.8,2.6,2.8,4.6V44H46v-9.5C46,29.8,45,26.2,39.5,26.2z" fill="white"></path></svg>
+                          LinkedIn
+                        </div>
+                      </a>
+                      <div class="dropdown-divider"></div>
+                      <a class="dropdown-item donate" target="_blank" href="http://www.google.com">
+                        Buy me a coffee
+                      </a>
+                    </div>
+                  </li>
+
+              </ul>
+          </div>
         </div>
     </nav>
 
-    <body>
+    <body class="display">
     
       <div class="post-toolbar">
-        <div class="container-display">
-          <div class="search-tools">
-            <div class="col-lg-12">
-              <select id="bedrooms-display" class="bedrooms-display dark-feather" multiple>
+        <div class="container">
+          <div class="row search justify-content-center">
+            <div class="col-md-auto">
+              <select id="bedrooms-display" class="bedrooms-display light-feather" multiple>
                 <option>Studio</option>
                 <option>1 Bed</option>
                 <option>2 Beds</option>
@@ -54,109 +106,112 @@
                 <option>5 Beds</option>
               </select>
             </div>
+
+          <div class="col-md-auto">
+            <select id="bathrooms-display" class="bathrooms-display light-feather" multiple>
+              <option>1 Bath</option>
+              <option>2 Baths</option>
+              <option>3 Baths</option>
+              <option>4 Baths</option>
+              <option>5 Baths</option>
+            </select>
           </div>
+
+          <div class="col-md-auto">
+            <select id="apartments-display" class="apartments-display light-feather" multiple>
+              <option data-description="(512) 477-3400">26 West</option>
+              <option data-description="(512) 478-9811">The Block</option>
+              <option data-description="(512) 478-9811">Crest At Pearl</option>
+              <option data-description="(512) 582-0200">The Callaway House</option>
+              <option data-description="(512) 478-9811">The Castilian</option>
+              <option data-description="(512) 478-9811">Texan & Vintage</option>
+              <option data-description="(512) 201-2713">Rio West</option>
+              <option data-description="(737) 207-9400">Skyloft</option>
+              <option data-description="(512) 537-4433">Twenty Two 15</option>
+              <option data-description="(512) 391-1991">21 Rio</option>
+              <option data-description="(737) 204-2650">The Nine at Rio</option>
+              <option data-description="(512) 531-0123">The Quarters at Grayson House</option>
+              <option data-description="(512) 531-0123">The Quarters at Montgomery House</option>
+              <option data-description="(512) 531-0123">The Quarters at Karnes House</option>
+              <option data-description="(512) 531-0123">The Quarters at Cameron House</option>
+              <option data-description="(512) 531-0123">The Quarters at Nueces House</option>
+              <option data-description="(512) 531-0123">The Quarters at Sterling House</option>
+            </select>
+              
+          </div>
+
+          <div class="col-md-auto">
+            <div class="button-group">
+              <button type="button" class="btn btn-light btn-lg dropdown-toggle" data-toggle="dropdown" ><span>Price</span> <span class="caret"></span></button>
+                <div class="dropdown-menu menu-3 price-size-menu">
+                  <div class="price-dropdown">
+                  <p>
+                    <label for="amount-price"><strong>Price range</strong> (per month):&nbsp;&nbsp;&nbsp; </label>
+                    <input type="text" id="amount-price" readonly style="border:1000px; color:white; font-weight:bold; background-color: gray;">
+                  </p>
+                  
+                  <div id="slider-range-price" class="price-size-slider"></div>
+                  </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-auto">
+            <div class="button-group">
+              <button type="button" class="btn btn-light btn-lg dropdown-toggle" data-toggle="dropdown" ><span>Size</span> <span class="caret"></span></button>
+                <div class="dropdown-menu menu-3 price-size-menu">
+                  <div class="price-dropdown">
+                    <p>
+                      <label for="amount-size"><strong>Size range</strong> (sqft):&nbsp;&nbsp;&nbsp; </label>
+                      <input type="text" id="amount-size" readonly style="border:0; color:white; font-weight:bold; background-color: gray;">
+                    </p>
+                    
+                    <div id="slider-range-size" class="price-size-slider"></div>
+                  </div>
+              </div>
+            </div>
+          </div>
+
+        <div class="col-md-auto">
+          <button class="btn btn-info btn-lg" id="submit" onclick="getData()">Search</button>
+        </div>
   
-          <div class="row search">
-            <div class="col-lg-12">
-              <select id="bathrooms-display" class="bathrooms-display dark-feather" multiple>
-                <option>1 Bath</option>
-                <option>2 Baths</option>
-                <option>3 Baths</option>
-                <option>4 Baths</option>
-                <option>5 Baths</option>
-              </select>
-                
-            </div>
-          </div>
 
-          <div class="row search">
-            <div class="col-lg-12">
-              <select id="apartments-display" class="apartments-display dark-feather" multiple>
-                <option data-description="(512) 477-3400">26 West</option>
-                <option data-description="(512) 478-9811">The Block</option>
-                <option data-description="(512) 478-9811">Crest At Pearl</option>
-                <option data-description="(512) 582-0200">The Callaway House</option>
-                <option data-description="(512) 478-9811">The Castilian</option>
-                <option data-description="(512) 478-9811">Texan & Vintage</option>
-                <option data-description="(512) 201-2713">Rio West</option>
-                <option data-description="(737) 207-9400">Skyloft</option>
-                <option data-description="(512) 537-4433">Twenty Two 15</option>
-                <option data-description="(512) 391-1991">21 Rio</option>
-                <option data-description="(737) 204-2650">The Nine at Rio</option>
-              </select>
-                
-            </div>
-          </div>
-
-            <div class="row search">
-              <div class="col-lg-12">
-                <div class="button-group">
-                  <button type="button" class="btn dropdown-toggle" data-toggle="dropdown"><span>Price</span> <span class="caret"></span></button>
-                  <ul class="dropdown-menu menu-3">
-                    <li><a href="#" class="small" data-value="option1-3" tabIndex="-1"><input name="prices" type="checkbox"/>&nbsp;Any</a></li>
-                    <li><a href="#" class="small" data-value="option2-3" tabIndex="-1"><input name="prices" type="checkbox"/>&nbsp;1</a></li>
-                    <li><a href="#" class="small" data-value="option3-3" tabIndex="-1"><input name="prices" type="checkbox"/>&nbsp;2</a></li>
-                    <li><a href="#" class="small" data-value="option4-3" tabIndex="-1"><input name="prices" type="checkbox"/>&nbsp;3</a></li>
-                    <li><a href="#" class="small" data-value="option5-3" tabIndex="-1"><input name="prices" type="checkbox"/>&nbsp;4</a></li>
-                    <li><a href="#" class="small" data-value="option6-3" tabIndex="-1"><input name="prices" type="checkbox"/>&nbsp;5</a></li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-
-            <div class="row search">
-              <div class="col-lg-12">
-                <div class="button-group">
-                  <button type="button" class="btn dropdown-toggle" data-toggle="dropdown"><span>Size</span> <span class="caret"></span></button>
-                  <ul class="dropdown-menu menu-4">
-                    <li><a href="#" class="small" data-value="option1-4" tabIndex="-1"><input name="sizes" type="checkbox"/>&nbsp;Any</a></li>
-                    <li><a href="#" class="small" data-value="option2-4" tabIndex="-1"><input name="sizes" type="checkbox"/>&nbsp;1</a></li>
-                    <li><a href="#" class="small" data-value="option3-4" tabIndex="-1"><input name="sizes" type="checkbox"/>&nbsp;2</a></li>
-                    <li><a href="#" class="small" data-value="option4-4" tabIndex="-1"><input name="sizes" type="checkbox"/>&nbsp;3</a></li>
-                    <li><a href="#" class="small" data-value="option5-4" tabIndex="-1"><input name="sizes" type="checkbox"/>&nbsp;4</a></li>
-                    <li><a href="#" class="small" data-value="option6-4" tabIndex="-1"><input name="sizes" type="checkbox"/>&nbsp;5</a></li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-
-            <button class="btn btn-primary" id="submit" onclick="getData()">Search</button>
-          </div>
-
-          <div class="sort-tools">
-            <select name="options-sort" id="sort">
-              <% if (sortBy && sortBy.indexOf('Beds') !== -1) { %>
-              <option value="beds-sort" selected>Beds (ascending)</option>
-              <option value="baths-sort">Baths (ascending)</option>
+        <div class="col-md-auto">
+          <select name="options-sort" id="sort" class="sort-display light-feather">
+            <% if (sortBy && sortBy.indexOf('Beds') !== -1) { %>
+            <option value="beds-sort" selected>Beds (ascending)</option>
+            <option value="baths-sort">Baths (ascending)</option>
+            <option value="price-sort">Price (ascending)</option>
+            <option value="size-sort">Size (ascending)</option>
+            <% } else if (sortBy && sortBy.indexOf('Baths') !== -1) {%>
+              <option value="beds-sort">Beds (ascending)</option>
+              <option value="baths-sort" selected>Baths (ascending)</option>
               <option value="price-sort">Price (ascending)</option>
               <option value="size-sort">Size (ascending)</option>
-              <% } else if (sortBy && sortBy.indexOf('Baths') !== -1) {%>
-                <option value="beds-sort">Beds (ascending)</option>
-                <option value="baths-sort" selected>Baths (ascending)</option>
-                <option value="price-sort">Price (ascending)</option>
-                <option value="size-sort">Size (ascending)</option>
-              <% } else if (sortBy && sortBy.indexOf('Price') !== -1) {%>
-                <option value="beds-sort">Beds (ascending)</option>
-                <option value="baths-sort">Baths (ascending)</option>
-                <option value="price-sort" selected>Price (ascending)</option>
-                <option value="size-sort">Size (ascending)</option>
-              <% } else if (sortBy && sortBy.indexOf('Size') !== -1) {%>
-                <option value="beds-sort">Beds (ascending)</option>
-                <option value="baths-sort">Baths (ascending)</option>
-                <option value="price-sort">Price (ascending)</option>
-                <option value="size-sort" selected>Size (ascending)</option>
-              <% } else { %>
-                <option value="beds-sort" selected>Beds (ascending)</option>
-                <option value="baths-sort">Baths (ascending)</option>
-                <option value="price-sort">Price (ascending)</option>
-                <option value="size-sort" >Size (ascending)</option>
-              <% } %>
-            </select>
+            <% } else if (sortBy && sortBy.indexOf('Price') !== -1) {%>
+              <option value="beds-sort">Beds (ascending)</option>
+              <option value="baths-sort">Baths (ascending)</option>
+              <option value="price-sort" selected>Price (ascending)</option>
+              <option value="size-sort">Size (ascending)</option>
+            <% } else if (sortBy && sortBy.indexOf('Size') !== -1) {%>
+              <option value="beds-sort">Beds (ascending)</option>
+              <option value="baths-sort">Baths (ascending)</option>
+              <option value="price-sort">Price (ascending)</option>
+              <option value="size-sort" selected>Size (ascending)</option>
+            <% } else { %>
+              <option value="beds-sort" >Beds (ascending)</option>
+              <option value="baths-sort">Baths (ascending)</option>
+              <option value="price-sort">Price (ascending)</option>
+              <option value="size-sort" >Size (ascending)</option>
+            <% } %>
+          </select>
 
-            <button type="button" class="btn btn-success" id="init-sort" onclick="sortData()">Sort Items</button>
-          </div>
+          <button type="button" class="btn btn-info btn-lg" id="init-sort" onclick="sortData()">Sort</button>
+        </div>
         </div>
       </div>
+    </div>
       
       <div class="explanation-info">
         <a id="process-tooltip" data-toggle="tooltip" data-placement="bottom" data-html="true" 
@@ -188,13 +243,19 @@
 
       <div class="container-cards">
             <div class="card-deck">
-              <% if (data.length === 0) { %>
+              <% if (!data || data.length === 0) { %>
                 <div class="disclaimer-noresults">
                   <img src="/images/noresults.png">
-                  <h1 class="disclaimer">No results found.</h1>
+                  <div class="disclaimer-message">
+                    <h1 class="disclaimer">No results found.</h1>
+                    <h2 class="disclaimer-text">Please broaden your search query or include fewer parameters in your search.</h2>
+                    <br>
+                    <h3 class="disclaimer-text-2">If there is an issue with our results, please click 'Contact Us' to let us know.</h3>
+                  </div>
+
                 </div>
               <% } %>
-              <% for(var i=0; i<data.length; i++) {%>
+              <% for(var i=0; data && i<data.length; i++) {%>
                 <div class="col-md-4">
                   <div class="complex-info">
                     <a target="_blank" class="tiptext aptName" href="<%= data[i].Website %>">
@@ -216,6 +277,9 @@
                         <div>
                           <i id="favorite" class="heart fa fa-heart-o" title="Favorite this Unit" name="<%= data[i].Name %>" apt="<%= data[i].Apartment %>" beds="<%= data[i].Beds %>" baths="<%= data[i].Baths%>"
                             data-toggle="modal" data-target="#favoriteModal" data-backdrop="false"></i>
+                        </div>
+                        <div>
+                          <i id="flag" class="flag fa fa-flag-o" name="<%= data[i].Name %>" apt="<%= data[i].Apartment %>" beds="<%= data[i].Beds %>" baths="<%= data[i].Baths%>" title="Report as inaccurate listing"></i>
                         </div>
                       </div>
                       <div class="card-body">
@@ -321,78 +385,99 @@
 
 
        <nav aria-label="Page navigation" id="pagination-block">
-        <% if (!(currentPage > parseInt(pages) || parseInt(pages) === 0)) { %>
-          <p class="page-num-description">Showing Page <b><%=parseInt(currentPage) %></b> of <b><%=parseInt(pages)%></b></p>
-          <% if (parseInt(pages) !== 1) { %> 
-          <ul class="pagination pagination-circle pg-blue justify-content-center pagination-lg">
-            <% if (currentPage == 1 && pages > 1) { %> 
-              <li class="page-item disabled"><a class="page-link" href="<%= path %>page=">First</a></li>
-              <li class="page-item disabled">
-                <a class="page-link" aria-label="Previous" href="<%= path %>page=<%= parseInt(currentPage) - 1 %>">
-                  <span aria-hidden="true">&laquo;</span>
-                  <span class="sr-only">Previous</span>
-                </a>
-              </li>
-            <% } else if (currentPage <= pages) { %>
-              <li class="page-item"><a class="page-link" href="<%= path %>/page=1">First</a></li>
-              <li class="page-item">
-                <a class="page-link" aria-label="Previous" href="<%= path %>page=<%= parseInt(currentPage) - 1 %>">
-                  <span aria-hidden="true">&laquo;</span>
-                  <span class="sr-only">Previous</span>
-                </a>
-              </li>
-            <% } %>
-          
-            <% if (currentPage >= 5) { %>
-              <% var diff = (currentPage + 1 < pages) ? 2 : (5 - (pages - currentPage) - 1); %>
-              <% var iterPage = currentPage - diff; %>
-              <% var i = 0; %>
-              <% while (i < 5 && (iterPage + i) <= pages) { %>
-                <% if ((iterPage + i) === parseInt(currentPage)) { %>
-                  <li class="page-item active"><a class="page-link" href="<%=path %>page=<%=iterPage + i%>"><%= iterPage + i%></a></li>
-                <% } else { %>
-                  <li class="page-item"><a class="page-link" href="<%=path %>page=<%=iterPage + i%>"><%= iterPage + i%></a></li>
-                <% } %>
-                <% i++ %>
+         <div class="container">
+           <div class="col-md-auto">
+          <% if (!(currentPage > parseInt(pages) || parseInt(pages) === 0)) { %>
+            <p class="page-num-description">Showing Page <b><%=parseInt(currentPage) %></b> of <b><%=parseInt(pages)%></b></p>
+            <% if (parseInt(pages) !== 1) { %> 
+            <ul class="pagination pagination-circle pg-blue justify-content-center pagination-lg flex-wrap">
+              <% if (currentPage == 1 && pages > 1) { %> 
+                <li class="page-item disabled"><a class="page-link" href="<%= path %>page=">First</a></li>
+                <li class="page-item disabled">
+                  <a class="page-link" aria-label="Previous" href="<%= path %>page=<%= parseInt(currentPage) - 1 %>">
+                    <span aria-hidden="true">&laquo;</span>
+                    <span class="sr-only">Previous</span>
+                  </a>
+                </li>
+              <% } else if (currentPage <= pages) { %>
+                <li class="page-item"><a class="page-link" href="<%= path %>/page=1">First</a></li>
+                <li class="page-item">
+                  <a class="page-link" aria-label="Previous" href="<%= path %>page=<%= parseInt(currentPage) - 1 %>">
+                    <span aria-hidden="true">&laquo;</span>
+                    <span class="sr-only">Previous</span>
+                  </a>
+                </li>
               <% } %>
-            <% } else { %>
-              <% var iterPage = 1; %>
-              <% while (iterPage <= 5 && iterPage <= pages) { %>
-                <% if (iterPage === parseInt(currentPage)) { %>
-                  <li class="page-item active"><a class="page-link" href="<%=path %>page=<%=iterPage %>"><%= iterPage %></a></li>
-                <% } else { %>
-                  <li class="page-item"><a class="page-link" href="<%=path %>page=<%=iterPage %>"><%= iterPage %></a></li>
+            
+              <% if (currentPage >= 5) { %>
+                <% var diff = (currentPage + 1 < pages) ? 2 : (5 - (pages - currentPage) - 1); %>
+                <% var iterPage = currentPage - diff; %>
+                <% var i = 0; %>
+                <% while (i < 5 && (iterPage + i) <= pages) { %>
+                  <% if ((iterPage + i) === parseInt(currentPage)) { %>
+                    <li class="page-item active"><a class="page-link" href="<%=path %>page=<%=iterPage + i%>"><%= iterPage + i%></a></li>
+                  <% } else { %>
+                    <li class="page-item"><a class="page-link" href="<%=path %>page=<%=iterPage + i%>"><%= iterPage + i%></a></li>
+                  <% } %>
+                  <% i++ %>
                 <% } %>
-                <% iterPage++; %>
+              <% } else { %>
+                <% var iterPage = 1; %>
+                <% while (iterPage <= 5 && iterPage <= pages) { %>
+                  <% if (iterPage === parseInt(currentPage)) { %>
+                    <li class="page-item active"><a class="page-link" href="<%=path %>page=<%=iterPage %>"><%= iterPage %></a></li>
+                  <% } else { %>
+                    <li class="page-item"><a class="page-link" href="<%=path %>page=<%=iterPage %>"><%= iterPage %></a></li>
+                  <% } %>
+                  <% iterPage++; %>
+                <% } %>
               <% } %>
+              
+              <% if (currentPage < pages) { %>
+                <li class="page-item">
+                  <a class="page-link" aria-label="Next" href="<%= path %>page=<%= parseInt(currentPage) + 1 %>">
+                    <span aria-hidden="true">&raquo;</span>
+                    <span class="sr-only">Next</span>
+                  </a>
+                </li>
+                <li class="page-item"><a class="page-link" href="<%= path %>page=<%= parseInt(pages) %>">Last</a></li>
+              <% } else { %>
+                <li class="page-item disabled">
+                  <a class="page-link" aria-label="Next" href="<%= path %>page=<%= parseInt(currentPage) + 1 %>">
+                    <span aria-hidden="true">&raquo;</span>
+                    <span class="sr-only">Next</span>
+                  </a>
+                </li>
+  
+                <li class="page-item disabled"><a class="page-link" href="<%= path %>page=<%= parseInt(pages) %>">Last</a></li>
+              <% } %>
+              
+            </ul>
+  
             <% } %>
-            
-            <% if (currentPage < pages) { %>
-              <li class="page-item">
-                <a class="page-link" aria-label="Next" href="<%= path %>page=<%= parseInt(currentPage) + 1 %>">
-                  <span aria-hidden="true">&raquo;</span>
-                  <span class="sr-only">Next</span>
-                </a>
-              </li>
-              <li class="page-item"><a class="page-link" href="<%= path %>page=<%= parseInt(pages) %>">Last</a></li>
-            <% } else { %>
-              <li class="page-item disabled">
-                <a class="page-link" aria-label="Next" href="<%= path %>page=<%= parseInt(currentPage) + 1 %>">
-                  <span aria-hidden="true">&raquo;</span>
-                  <span class="sr-only">Next</span>
-                </a>
-              </li>
-
-              <li class="page-item disabled"><a class="page-link" href="<%= path %>page=<%= parseInt(pages) %>">Last</a></li>
-            <% } %>
-            
-          </ul>
-
           <% } %>
-        <% } %>
+        </div>
+         </div>
+        
       </nav>
 
     </body>
+
+    <footer class="page-footer">
+      <div class="container footer">
+        <div class="footer-copyright col-md-6">
+          <img class="footer-logo" src="images/logofooter.png">
+          <div class="copyright">
+            <span style="font-family:Arial, Helvetica, sans-serif"> &nbsp;©</span>
+            <text>2020</text>
+          </div>
+        </div>
+        <div class="col-md-6 privacy">
+          <a href="/privacy" target="_blank"> Privacy Policy</a>
+        </div>
+      </div>
+    
+    </footer>
 
     <script>
       $(document).ready(function(){

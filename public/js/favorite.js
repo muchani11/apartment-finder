@@ -8,7 +8,7 @@ window.onload = function() {
         arr.push(obj);
     }
 
-    var url = "http://localhost:8080/search/favorites";
+    var url = "/search/favorites";
     $.get(url, {data: arr}, 
         function(returnedData){
             handleRender(returnedData);
@@ -52,6 +52,26 @@ function handleRender(data) {
           $(this).attr('title', 'Favorite this Unit');
         }
       });
+
+      $(".flag.fa").click(function() {
+        if ($(this).attr('class').indexOf('fa-flag-o') !== -1) {
+          toastr.options.timeOut = 6000;
+          toastr.info("Thank you for reporting this listing as inaccurate. We will take a look into it!");
+          var url = '/search/report';
+          var data = {name: $(this).attr('name'), apt: $(this).attr('apt'), beds: $(this).attr('beds'), baths: $(this).attr('baths')};
+  
+          $.ajax({
+            url: url,
+            type: 'POST',
+            data: data,
+            success: function(res) {
+            }
+        });
+        }
+       
+        $(this).attr('class', 'flag fa fa-flag');
+        $(this).css('color', 'red');
+        });
 }
 
 function addTop(data, div) {
@@ -95,7 +115,12 @@ function addTop(data, div) {
     var heart = document.createElement('div');
     heart.innerHTML = '<i id="favorite" class="heart fa fa-heart" title="Unfavorite this Unit"' +  
     'name="' + data.Name + '" apt="'+ data.Apartment + '" beds="' +  data.Beds + '" baths="' + data.Baths + 
-    '" data-toggle="modal" data-target="#favoriteModal" data-backdrop="false"></i>'
+    '" data-toggle="modal" data-target="#favoriteModal" data-backdrop="false"></i>';
+
+    var flag = document.createElement('div');
+    flag.innerHTML = `<i id="flag" class="flag fa fa-flag-o" \
+    name='${data.Name}' apt='${data.Apartment}' beds='${data.Beds}' \
+    baths='${data.Baths}' title="Report as inaccurate listing"></i>`;
     div.appendChild(colMd);
     colMd.appendChild(complex);
     colMd.appendChild(mapPhone);
@@ -103,6 +128,7 @@ function addTop(data, div) {
     cardMd.appendChild(icons);
     icons.appendChild(img);
     icons.appendChild(heart);
+    icons.appendChild(flag);
 
     addBody(data, cardMd);
 
@@ -147,7 +173,6 @@ function addBody(data, cardMd) {
 
     text.innerHTML += "<strong>" + data.Baths + "</strong> ba &nbsp;|&nbsp;";
 
-    console.log(data.MinSize);
     if (data.MinSize === 0) {
         text.innerHTML += "<strong>Unlisted</strong> sqft";
     }
@@ -211,7 +236,6 @@ function addModal(data, cardDeck) {
 }
 
 function displayFull(img, name) {
-    console.log(img);
     var modal = document.getElementById("myModal");
     var modalImg = document.getElementById("img01");
 

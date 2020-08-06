@@ -3,7 +3,6 @@ var input = document.getElementsByClassName('searchTerm')[0];
 // Execute a function when the user releases a key on the keyboard
 input.addEventListener("keyup", function(event) {
   // Number 13 is the "Enter" key on the keyboard
-  console.log('onjour');
   if (event.keyCode === 13) {
     // Cancel the default action, if needed
     event.preventDefault();
@@ -47,7 +46,7 @@ $('#post-form').on('submit', function(event) {
     //var data = {name: name, price: price, email: email, description: description, university: university, furnitureImage: image, dateTime: date, author: "Me"};
     $.ajax({
         type: 'POST',
-        url: 'http://localhost:8080/furniture',
+        url: '/furniture',
         processData: false,
         contentType: false,
         data: form,
@@ -84,7 +83,7 @@ $('.interested-form').on('submit', function(event) {
     console.log(data);
     $.ajax({
         type: 'POST',
-        url: 'http://localhost:8080/email-furniture',
+        url: '/email-furniture',
         data: data,
         success: function(res) {
             if (res === "Successful") {
@@ -152,7 +151,7 @@ function reportSublet(id, name, price, university) {
     var data = {publicID: id, name: name, price: price, university: university};
     $.ajax({
         type: 'POST',
-        url: 'http://localhost:8080/furniture/report',
+        url: '/furniture/report',
         data: data,
         success: function(res) {
             if (res === "Successful") {

@@ -1,9 +1,7 @@
 var express = require('express');
 var mysql = require('mysql');
 var bodyParser = require('body-parser');
-//var paginate = require('paginate')();
 require('dotenv').config();
-var https = require('https');
 var fs = require('fs');
 const app = express();
 const port = 8080;
@@ -111,42 +109,10 @@ app.get('/search', (req, res) => {
     });
 });
 
-app.use(function(e, req, res, next) {
-    if (e.message === "Bad request") {
-        res.status(400).json({error: {msg: e.message, stack: e.stack}});
-    }
-});
-
-// app.get('/search/:beds/:baths/:price/:size/:apartmentName/:sortBy/:order/:page?', (req, res) => {
-
-//     var query = assembleQuery(req.params.beds, req.params.baths, req.params.price, req.params.size, req.params.apartmentName);
-//     var path = req.path.substring(0, req.path.lastIndexOf("]") + 1);
-//     const limit = 12;
-//     const page = req.params.page || 1;
-//     const offset = (page - 1) * limit;
-//     if (req.params.sortBy === "Price")
-//         req.params.sortBy = "MinPrice";
-//     if (req.params.sortBy === "Size")
-//         req.params.sortBy = "MinSize";
-
-//     req.params.order = req.params.order.replace("[", "");
-//     req.params.order = req.params.order.replace("]", "");
-
-//     query += " ORDER BY " + req.params.sortBy + " " + req.params.order + " LIMIT ? OFFSET ?";
-//     var sortBy = [limit, offset];
-//     pool.getConnection(function(err, connection) {
-//         if (err) throw err;
-//         connection.query(query, sortBy, function (err, result, fields) {
-//             if (err) throw err;
-//             var numPages;
-//             if (result.length > 0)
-//                 numPages = Math.ceil(result[0].full_count / parseFloat(limit));
-//             else numPages = 0;
-
-//             res.render('display', {data: result, currentPage: parseInt(page), pages: numPages, path: path, sortBy: req.params.sortBy});
-//             connection.release();
-//           });
-//     });
+// app.use(function(e, req, res, next) {
+//     if (e.message === "Bad request") {
+//         res.status(400).json({error: {msg: e.message, stack: e.stack}});
+//     }
 // });
 
 
@@ -160,14 +126,40 @@ app.get('/search/favorites', (req, res) => {
     pool.getConnection(function(err, connection) {
         if (err) throw err;
         connection.query(query, arr, function (err, result, fields) {
-            if (err) throw err;
-            
+            if (err) {
+                res.status(404).render('error404', {path: req.path});
+                connection.release();
+                return;
+            }
             res.send(result);
             connection.release();
           });
     });
 });
 
+app.post('/search/report', (req, res) => {
+    var name = req.body.name;
+    var apt = req.body.apt;
+    var beds = req.body.beds;
+    var baths = req.body.baths;
+
+    var mailOptions = {
+        from: process.env.USER_EMAIL,
+        to: process.env.USER_EMAIL,
+        subject: 'User reported a unit listing called ' + name + ' from ' + apt,
+        text: `A user reported a unit listing titled '${name}' from '${apt}'. The unit has ${beds} bedrooms and ${baths} bathrooms. Take a look and decide if it is necessary to take it down!`
+    };
+
+    transporter.sendMail(mailOptions, function(error, info){
+        if (error) {
+            console.log(error);
+        } else {
+            console.log('Email sent: ' + info.response);
+            res.send('Successful');
+        }
+    });
+
+})
 app.post('/furniture', upload.single('furnitureImage'), (req, res) => {
     var file;
     if (req.file && req.file.path) {
@@ -178,16 +170,43 @@ app.post('/furniture', upload.single('furnitureImage'), (req, res) => {
     }
 
     var private = Math.random().toString(36).slice(2);
-    var query = `INSERT INTO furniture_data(ProductName, ProductPrice, ProductDescription, Author, University, Date, Email, Image, PublicID, PrivateID) \
-VALUES(?, ?, ?, ?, ?, ?, ?, ?, UUID(), CONCAT('${private}', UUID()))`;
+    var query = `
+SET @recentUUID = UUID(); \
+START TRANSACTION; \
+INSERT INTO furniture_data(ProductName, ProductPrice, ProductDescription, Author, University, Date, Email, Image, PublicID, PrivateID) \
+VALUES(?, ?, ?, ?, ?, ?, ?, ?, @recentUUID, CONCAT('${private}', @recentUUID)); \
+SELECT * FROM furniture_data WHERE PublicID=@recentUUID; \
+COMMIT;`;
+    var recUUID;
     var arr = [req.body.name, req.body.price, req.body.description, req.body.author, req.body.university, 
         req.body.dateTime, req.body.email, file];
     pool.getConnection(function(err, connection) {
         if (err) throw err;
         connection.query(query, arr, function (err, result, fields) {
-            if (err) throw err;
+            if (err) console.log(err);
+            
+            recUUID = result[result.length - 2];
+
             res.send("Successful");
             connection.release();
+
+            recUUID = recUUID[0];
+            var html = createFurnitureEmail(req.body.name, req.body.price, req.body.description, req.body.university,
+            `www.leazy.org/furniture/posts/delete/${recUUID.PublicID}/${recUUID.PrivateID}`);
+            var mailOptions = {
+                from: process.env.USER_EMAIL,
+                to: req.body.email,
+                subject: 'Your furniture item has been posted!',
+                html: html
+            };
+
+            transporter.sendMail(mailOptions, function(error, info){
+                if (error) {
+                    console.log(error);
+                } else {
+                    console.log('Email sent: ' + info.response);
+                }
+            });
         });
     });
 });
@@ -197,7 +216,11 @@ app.get('/furniture', (req, res) => {
     pool.getConnection(function(err, connection) {
         if (err) throw err;
         connection.query(query, function (err, result, fields) {
-            if (err) throw err;
+            if (err) {
+                res.status(404).render('error404', {path: req.path});
+                connection.release();
+                return;
+            }
             res.render('furniture', {data: result, diff: timeDifference, path: req.path});
             connection.release();
         });
@@ -211,7 +234,11 @@ app.get('/furniture/posts/:id', (req, res) => {
     pool.getConnection(function(err, connection) {
         if (err) throw err;
         connection.query(query, id, function (err, result, fields) {
-            if (err) throw err;
+            if (err) {
+                res.status(404).render('error404', {path: req.path});
+                connection.release();
+                return;
+            }
             res.render('furniture-post', {data: result, diff: timeDifference, path: req.path});
             connection.release();
         });
@@ -220,19 +247,21 @@ app.get('/furniture/posts/:id', (req, res) => {
 
 
 app.post('/email-furniture', (req, res) => {
-    var query = `SELECT Email FROM furniture_data WHERE PublicID=?`;
+    var query = `SELECT Email, PublicID, PrivateID FROM furniture_data WHERE PublicID=?`;
     var id = req.body.id;
+    var deletionLink; 
 
     pool.getConnection(function(err, connection) {
         if (err) throw err;
         connection.query(query, id, function (err, result, fields) {
             if (err) throw err;
+            deletionLink = `www.leazy.org/furniture/posts/delete/${result[0].PublicID}/${result[0].PrivateID}`;
+            var html = createFurnitureReply(req.body.name, req.body.university, req.body.description, req.body.email, deletionLink);
             var mailOptions = {
                 from: process.env.USER_EMAIL,
                 to: result[0].Email,
                 subject: req.body.name + ' is interested in buying your furniture!',
-                text: 'A student from ' + req.body.university + ' is interested in your furniture and sent you the following message.' +
-                '\n' + req.body.description + '\n' + 'Contact this person back: ' + req.body.email
+                html: html
               };
 
             transporter.sendMail(mailOptions, function(error, info){
@@ -259,15 +288,36 @@ app.get('/furniture/posts/search/:search', (req, res) => {
     pool.getConnection(function(err, connection) {
         if (err) throw err;
         connection.query(query, arr, function (err, result, fields) {
-            if (err) throw err;
+            if (err) {
+                res.status(404).render('error404', {path: req.path});
+                connection.release();
+                return;
+            }
             res.render('furniture', {data: result, diff: timeDifference, path: req.path});
             connection.release();
         });
     });
 });
 
-
 app.get('/furniture/posts/delete/:publicId/:privateId', (req, res) => {
+    var query = `SELECT * FROM furniture_data WHERE PublicID=? AND PrivateID=?`;
+    var arr = [req.params.publicId, req.params.privateId];
+    pool.getConnection(function(err, connection) {
+        if (err) throw err;
+        connection.query(query, arr, function(err, result, fields) {
+            if (err || result.length === 0) {
+                res.status(404).render('error404', {path: req.path});
+                connection.release();
+                return;
+            }
+            
+            res.render('deletion', {data: result, diff: timeDifference, path: req.path});
+            connection.release();
+        });
+    });
+});
+
+app.post('/furniture/posts/delete/:publicId/:privateId', (req, res) => {
     var queryFindImage = `SELECT Image FROM furniture_data WHERE PublicID=? AND PrivateID=?`;
     var query = `DELETE FROM furniture_data WHERE PublicID=? AND PrivateID=?`;
     var arr = [req.params.publicId, req.params.privateId];
@@ -298,7 +348,7 @@ app.get('/furniture/posts/delete/:publicId/:privateId', (req, res) => {
                         }
                     });
                 }
-                res.send("<h1>The post was successfully deleted. </h1>");
+                res.send("Successful");
             }
             connection.release();
 
@@ -329,7 +379,7 @@ app.post('/furniture/report', (req, res) => {
             res.send('Successful');
         }
     });
-})
+});
 
 app.post('/sublet', upload.array('unitImages', 6), (req, res) => {
     var files = [];
@@ -350,7 +400,9 @@ START TRANSACTION; \
 INSERT INTO sublet_data(UnitName, UnitBeds, UnitBaths, UnitPrice, UnitDescription, Furnished, University, ApartmentName, AptWebsite, Gender, Duration, StartDate, EndDate, \
 Date, Email, PublicID, PrivateID) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, @recentUUID, CONCAT('${private}', @recentUUID)); \
 ${inserts}; \
+SELECT * FROM sublet_data WHERE PublicID=@recentUUID;\
 COMMIT;`;
+var recUUID;
     var arr = [req.body.name, req.body.beds, req.body.baths, req.body.rent, req.body.description, req.body.furnished, req.body.university, req.body.complex, req.body.website, req.body.gender,
         req.body.duration, req.body.startDate, req.body.endDate, req.body.dateTime, req.body.email];
     arr.push.apply(arr, files);
@@ -358,10 +410,36 @@ COMMIT;`;
         if (err) throw err;
         connection.query(query, arr, function (err, result, fields) {
             if (err) console.log(err);
+            recUUID = result[result.length - 2];
+
             res.send("Successful");
             connection.release();
+
+            var furnished = "No";
+            if (req.body.furnished === 1) {
+                furnished = "Yes";
+            }
+            recUUID = recUUID[0];
+            var html = createSubletEmail(req.body.beds, req.body.baths, req.body.rent, req.body.complex, req.body.university, furnished, req.body.gender, `${req.body.startDate} - ${req.body.endDate}`,
+            req.body.duration, req.body.description, `www.leazy.org/sublet/posts/delete/${recUUID.PublicID}/${recUUID.PrivateID}`);
+            var mailOptions = {
+                from: process.env.USER_EMAIL,
+                to: req.body.email,
+                subject: 'Your unit for subletting has been posted!',
+                html: html
+            };
+
+            transporter.sendMail(mailOptions, function(error, info){
+                if (error) {
+                    console.log(error);
+                } else {
+                    console.log('Email sent: ' + info.response);
+                    res.send('Successful');
+                }
+            });
         });
     });
+
 });
 
 
@@ -372,7 +450,11 @@ app.get('/sublet', (req, res) => {
     pool.getConnection(function(err, connection) {
         if (err) throw err;
         connection.query(query, function (err, result, fields) {
-            if (err) throw err;
+            if (err) {
+                res.status(404).render('error404', {path: req.path});
+                connection.release();
+                return;
+            }
             res.render('sublet', {data: result, diff: timeDifference, path: req.path});
             connection.release();
         });
@@ -403,7 +485,11 @@ app.get('/sublet/posts/search/:search', (req, res) => {
     pool.getConnection(function(err, connection) {
         if (err) throw err;
         connection.query(query, arr, function (err, result, fields) {
-            if (err) throw err;
+            if (err) {
+                res.status(404).render('error404', {path: req.path});
+                connection.release();
+                return;
+            }
             res.render('sublet', {data: result, diff: timeDifference, path: req.path});
             connection.release();
         });
@@ -411,19 +497,20 @@ app.get('/sublet/posts/search/:search', (req, res) => {
 });
 
 app.post('/email-sublet', (req, res) => {
-    var query = `SELECT Email FROM sublet_data WHERE PublicID=?`;
+    var query = `SELECT Email, PublicID, PrivateID FROM sublet_data WHERE PublicID=?`;
     var id = req.body.id;
-
+    var deletionLink; 
     pool.getConnection(function(err, connection) {
         if (err) throw err;
         connection.query(query, id, function (err, result, fields) {
             if (err) throw err;
+            deletionLink = `www.leazy.org/sublet/posts/delete/${result[0].PublicID}/${result[0].PrivateID}`;
+            var html = createSubletReply(req.body.name, req.body.university, req.body.description, req.body.email, deletionLink);
             var mailOptions = {
                 from: process.env.USER_EMAIL,
                 to: result[0].Email,
                 subject: req.body.name + ' is interested in subleasing your apartment!',
-                text: 'A student from ' + req.body.university + ' is interested in your apartment unit and sent you the following message.' +
-                '\n' + req.body.description + '\n' + 'Contact this person back: ' + req.body.email
+                html: html
               };
 
             transporter.sendMail(mailOptions, function(error, info){
@@ -469,8 +556,25 @@ app.post('/sublet/report', (req, res) => {
     });
 })
 
-
 app.get('/sublet/posts/delete/:publicId/:privateId', (req, res) => {
+    var query = `SELECT * FROM sublet_data WHERE PublicID=? AND PrivateID=?`;
+    var arr = [req.params.publicId, req.params.privateId];
+    pool.getConnection(function(err, connection) {
+        if (err) throw err;
+        connection.query(query, arr, function(err, result, fields) {
+            if (err || result.length === 0) {
+                res.status(404).render('error404', {path: req.path});
+                connection.release();
+                return;
+            }
+            
+            res.render('deletion', {data: result, diff: timeDifference, path: req.path});
+            connection.release();
+        });
+    });
+});
+
+app.post('/sublet/posts/delete/:publicId/:privateId', (req, res) => {
     var queryFindImage = `SELECT (SELECT GROUP_CONCAT(sublet_images.ImageName) FROM sublet_images WHERE sublet_images.PublicID = sublet_data.PublicID) AS allImages FROM sublet_data \
     WHERE sublet_data.PublicID=? AND PrivateID=?`;
     var query = `DELETE FROM sublet_data WHERE PublicID=? AND PrivateID=?`;
@@ -505,7 +609,7 @@ app.get('/sublet/posts/delete/:publicId/:privateId', (req, res) => {
                         });
                     }
                 }
-                res.send("<h1>The post was successfully deleted. </h1>");
+                res.send("Successful");
             }
             connection.release();
 
@@ -515,47 +619,97 @@ app.get('/sublet/posts/delete/:publicId/:privateId', (req, res) => {
 });
 
 
+app.get('/privacy', (req, res) => {
+    res.render('privacy');
+})
+function createSubletEmail(beds, baths, price, apartment, university, furnished, gender, term, duration, description, deletionLink) {
+    var html = `
+    <!DOCTYPE html>
+    <html lang="en-US">
+        <body>
+            <h1 style="font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: darkred;" >Congratulations - Your unit has been posted!</h1>
+            <h2>Post information: </h2>
+            <ul>
+                <li><b><u>Bedrooms:</b></u> ${beds}</li>
+                <li><b><u>Bathrooms:</b></u> ${baths}</li>
+                <li><b><u>Rent Price:</b></u> $${price} per month</li>
+                <li><b><u>Apartment Complex:</b></u> ${apartment} </li>
+                <li><b><u>University:</b></u> ${university}</li>
+                <li><b><u>Furnished:</b></u> ${furnished}</li>
+                <li><b><u>Gender of Subtenant:</b></u> ${gender}</li>
+                <li><b><u>Lease Term:</b></u> ${term}</li>
+                <li><b><u>Lease Duration:</b></u> ${duration} months</li>
+                <li style="white-space:pre-wrap"><b><u>Unit Description:</b></u> ${description}</li>
+            </ul>
+            <p>We will notify you whenever anyone who is interested in your post decides to contact you!</p>
+            <text>If you want to delete this post permanently, please 
+                <a href="${deletionLink}">Click Here</a> 
+            </text>
+        </body>
+    </html>`;
 
-// app.get('/furniture/posts/delete/:publicId/:privateId', (req, res) => {
-//     var queryFindImage = `SELECT Image FROM furniture_data WHERE PublicID=? AND PrivateID=?`;
-//     var query = `DELETE FROM furniture_data WHERE PublicID=? AND PrivateID=?`;
-//     var arr = [req.params.publicId, req.params.privateId];
-//     var img;
-//     pool.getConnection(function(err, connection) {
-//         if (err) throw err;
-//         connection.query(queryFindImage, arr, function(err, result, fields) {
-//             if (err) throw err;
-//             if (result.affectedRows === 0) {
-//                 img = null;
-//             }
-//             else img = result[0].Image;
-//         });
+    return html;
+}
 
-//         connection.query(query, arr, function(err, result, fields) {
-//             if (err) throw err;
-//             if (result.affectedRows === 0) {
-//                 res.status(404).send("<h1>The post you requested does not exist. </h1>");
-//             }
-//             else {
-//                 if (img && img !== 'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcSADPzrYm_hQg2XMNc_9KTr9Axmn35s0DbsIQ&usqp=CAU') {
-//                     fs.unlink('public' + img, (err) => {
-//                         if (err) {
-//                             console.log("failed to delete local image:"+err);
-//                         } 
-//                         else {
-//                             console.log('successfully deleted local image');                                
-//                         }
-//                     });
-//                 }
-//                 res.send("<h1>The post was successfully deleted. </h1>");
-//             }
-//             connection.release();
+function createSubletReply(name, university, message, email, deletionLink) {
+    var html = `
+    <!DOCTYPE html>
+    <html lang="en-US">
+        <body>
+            <h1 style="font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: green;" >${name} from ${university} is interested in your unit for subleasing!</h1>
+            <p>A student at ${university} is interested in your post on leazy.org and sent you the following message: </p>
+            <p style="margin-left: 20px; white-space: pre-wrap"><em>${message}</em></p>
+            <p>Contact this person back if you're interested in subletting to them: ${email}</p>
+            <text>If you want to delete this post permanently, please 
+                <a href="${deletionLink}">Click Here</a> 
+            </text>
+        </body>
+    </html>`;
 
-//         });
-//     });
+    return html;
+}
 
-// });
+function createFurnitureEmail(name, price, description, university, deletionLink) {
 
+    var html = `
+    <!DOCTYPE html>
+    <html lang="en-US">
+        <body>
+            <h1 style="font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: darkred;" >Congratulations - Your furniture has been posted!</h1>
+            <h2>Post information: </h2>
+            <ul>
+                <li><b><u>Item Name:</b></u> ${name}</li>
+                <li><b><u>Item Price:</b></u> $${price}</li>
+                <li><b><u>Item Description:</b></u> ${description}</li>
+                <li><b><u>University:</b></u> ${university}</li>
+            </ul>
+            <p>We will notify you whenever anyone who is interested in your post decides to contact you!</p>
+            <text>If you want to delete this post permanently, please 
+                <a href="${deletionLink}">Click Here</a> 
+            </text>
+        </body>
+    </html>`;
+
+    return html;
+}
+
+function createFurnitureReply(name, university, message, email, deletionLink) {
+    var html = `
+    <!DOCTYPE html>
+    <html lang="en-US">
+        <body>
+            <h1 style="font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: green;" >${name} from ${university} is interested in your furniture!</h1>
+            <p>A student at ${university} is interested in your post on leazy.org and sent you the following message: </p>
+            <p style="margin-left: 20px; white-space: pre-wrap"><em>${message}</em></p>
+            <p>Contact this person back if you're interested in selling to them: ${email}</p>
+            <text>If you want to delete this post permanently, please 
+                <a href="${deletionLink}">Click Here</a> 
+            </text>
+        </body>
+    </html>`;
+
+    return html;
+}
 
 function getFavorites(data) {
     var query;
@@ -619,7 +773,7 @@ function assembleQuery(beds, baths, prices, sizes, names) {
         atLeastOne = 1;
         price += "(MinPrice BETWEEN ";
         if (prices.length === 1) {
-            price += "? AND ?)";
+            price += "? AND ?";
             arr.push(prices[0]);
             arr.push(prices[0]);
         }
@@ -640,12 +794,12 @@ function assembleQuery(beds, baths, prices, sizes, names) {
         size += "(MinSize BETWEEN ";
 
         if (sizes.length === 1) {
-            size += "? AND ?)";
+            size += "? AND ?";
             arr.push(sizes[0]);
             arr.push(sizes[0]);
         }
         else {
-            size += "? AND ?)";
+            size += "? AND ?";
             arr.push(sizes[0]);
             arr.push(sizes[1]);
         }
@@ -677,7 +831,7 @@ function assembleQuery(beds, baths, prices, sizes, names) {
 
 //The 404 Route (ALWAYS Keep this as the last route)
 app.get('*', function(req, res){
-    res.status(404).send("DID NOT FIND ANYTHING");
+    res.status(404).render('error404', {path: req.path});
   });
 
 function insertImages(num) {

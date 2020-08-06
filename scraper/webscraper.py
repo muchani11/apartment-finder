@@ -43,6 +43,7 @@ id_skyloft = 8
 id_2215 = 9
 id_21rio = 10
 id_9rio = 11
+id_quarters_nueces = [12, 13, 14, 15, 16, 17]
 
 
 def site_init(url):
@@ -77,6 +78,14 @@ def insert_data(name, bed, bath, price, wait, unit, size, dep, link, apt_complex
         max_price = int(float(price[price.find("-")+1:]))
         min_prices.append(min_price)
         max_prices.append(max_price)
+    elif price.find("–") > -1:
+        price = price.replace(" ", "")
+        price = price.replace("$", "")
+        price = price.replace(",", "")
+        min_price = int(float(price[0:price.find("–")]))
+        max_price = int(float(price[price.find("–") + 1:]))
+        min_prices.append(min_price)
+        max_prices.append(max_price)
     else:
         price = price.replace("$", "")
         price = price.replace(" ", "")
@@ -85,7 +94,14 @@ def insert_data(name, bed, bath, price, wait, unit, size, dep, link, apt_complex
         min_prices.append(price)
         max_prices.append(price)
 
-    if size.find("-") > -1:
+    if size.find("–") > -1:
+        size = size.replace(" ", "")
+        size = size.replace(",", "")
+        min_size = int(float(size[0:size.find("–")]))
+        max_size = int(float(size[size.find("–") + 1:]))
+        min_sizes.append(min_size)
+        max_sizes.append(max_size)
+    elif size.find('-') > -1:
         size = size.replace(" ", "")
         size = size.replace(",", "")
         min_size = int(float(size[0:size.find("-")]))
@@ -507,6 +523,56 @@ def extract_9rio():
         site_init(url)
 
 
+def extract_quarters_nueces():
+    url = 'https://quartersoncampus.com/floor-plans/'
+    site_init(url)
+    houses = driver.find_element_by_id('floorplan-triggers').find_elements_by_tag_name('a')
+    for i in range(len(houses)):
+        apt_name = houses[i].get_attribute('innerHTML')
+        relHouse = apt_name[0:apt_name.find('House') - 1].lower()
+        models = driver.find_element_by_id('floorplan-' + relHouse).find_elements_by_class_name('et_pb_text_inner')
+        print(apt_name)
+        for j in range(len(models)):
+            item = models[j]
+            try:
+                item.find_element_by_class_name('floorplan__title')
+            except NoSuchElementException as e:
+                continue
+
+            name = item.find_element_by_class_name('floorplan__title').get_attribute('innerHTML')
+            info = item.find_element_by_class_name('floorplan__info').get_attribute('innerHTML')
+            info = info.split('<br>')
+
+            bed = None
+            bath = None
+            size = None
+            if info[0].find('Studio') > -1:
+                bed = 0
+                bath = 1
+            else:
+                bedIndex = info[0].split(" ")
+                bed = bedIndex[0]
+                bath = bedIndex[len(bedIndex) - 2]
+
+            sizeIndex = info[1]
+            size = sizeIndex[0: sizeIndex.find("Sq") - 1]
+            price = item.find_element_by_class_name('floorplan__info--optional').get_attribute('innerHTML')
+            if price.find('Sold Out') > -1:
+                continue
+
+            price = price[price.find("$"):]
+            image = item.find_element_by_xpath('p[2]/a').get_attribute('href')
+            wait = 0
+            units = ''
+            dep = 0
+            link = url
+
+            size = size.replace('–', '-')
+            price = price.replace('–', '-')
+            insert_data(name, bed, bath, price, wait, units, size, dep, link, 'The Quarters at ' + apt_name, image, id_quarters_nueces[i])
+
+
+
 def connect():
     connection = None
     try:
@@ -589,13 +655,15 @@ driver = webdriver.Chrome("/mnt/c/Program Files (x86)/Google/Chrome/Application/
 #connect()
 #extract_riowest()
 #connect()
-extract_skyloft()
-connect()
-extract_21rio()
-connect()
-extract_9rio()
-connect()
-extract_twentytwo15()
+# extract_skyloft()
+# connect()
+# extract_21rio()
+# connect()
+# extract_9rio()
+# connect()
+# extract_twentytwo15()
+# connect()
+extract_quarters_nueces()
 driver.close()
 connect()
 

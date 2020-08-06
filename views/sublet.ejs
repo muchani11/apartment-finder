@@ -1,6 +1,18 @@
 <!DOCTYPE html>
 <html lang="en-US">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Leazy is a portal for UT Austin students where you can find ideal apartments fitting various categories, trade furniture, and sublease.">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="author" content="Madhavan Uchani">
+    <meta name="author" content="Aryan Gandhi">
+    <meta name="keywords" content="Leasing, UT Austin, Austin area, West Campus, Apartment, Sublease, Furniture, Student, Housing, Living, College, Bedrooms, Bathrooms, Square Feet">
+    <title>Leazy - Student Leasing, Subleasing, and Furniture Trading</title>
+    <link rel="icon" href="/images/titlelogo.png">
+  </head>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
@@ -8,401 +20,483 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
   <script src='https://kit.fontawesome.com/a076d05399.js'></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-  <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
   <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-  <script src="http://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.2/js/toastr.min.js"></script>
-
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.2/js/toastr.min.js"></script>
   <link href="/css/furniture.css" rel="stylesheet" type="text/css">
-      <nav class="navbar navbar-expand-md navbar-light bg-light">
-        <a class="navbar-brand" href="/">Navbar</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="/">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/favorites.html">Favorites</a>
-                </li>
 
-                <li class="nav-item active">
-                  <a class="nav-link" href="/sublet">Sublet<span class="sr-only">(current)</span></a>
-                </li>
+  <nav class="landing-navbar navbar navbar-expand-md navbar-light">
+    <div class="container">
+      <a href="/" class="navbar-brand">
+        <img class="logo" src="/images/logohorizontal.png">
+      </a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+          <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ml-auto">
+              <li class="nav-item">
+                  <a class="nav-link" href="/">Home</a>
+              </li>
+              <li class="nav-item">
+                  <a class="nav-link" href="/favorites.html">Favorites</a>
+              </li>
 
-                <li class="nav-item">
-                    <a class="nav-link" href="/furniture">Furniture</a>
-                </li>
-            </ul>
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link" href="mailto:muchani11@gmail.com">Contact Us</a>
-                </li>
-            </ul>
-        </div>
-    </nav>
-    <body>
-        
-        <div class="container-cards">
-          <div class="post-toolbar">
+              <li class="nav-item active">
+                <a class="nav-link" href="/sublet">Sublet <span class="sr-only">(current)</span></a>
+              </li>
 
-            <div class="search">
-              <input class="searchTerm" type="search" placeholder="Search Posts" aria-describedby="button-addon1" class="form-control border-20 bg-light">
-              <button type="submit" class="searchButton" onclick="searchQuery()">
-                <i class="fa fa-search" aria-hidden="true"></i>
-              </button>
-            </div>
-            <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#exampleModal">
+              <li class="nav-item">
+                  <a class="nav-link" href="/furniture">Furniture</a>
+              </li>
+
+              <li class="nav-item">
+                <a class="nav-link" href="mailto:leazyhelp@gmail.com">Contact Us</a>
+              </li>
+
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Share
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                  <a class="dropdown-item socialMedia" target="_blank" href="https://facebook.com/sharer/sharer.php?u=https%3A%2F%2Fwww.leazy.org">
+                    <div class="social">
+                      <svg class="social-icons" viewBox="0 0 64 64" width="32" height="32"><circle cx="32" cy="32" r="31" fill="#3b5998"></circle><path d="M34.1,47V33.3h4.6l0.7-5.3h-5.3v-3.4c0-1.5,0.4-2.6,2.6-2.6l2.8,0v-4.8c-0.5-0.1-2.2-0.2-4.1-0.2 c-4.1,0-6.9,2.5-6.9,7V28H24v5.3h4.6V47H34.1z" fill="white"></path></svg>
+                      Facebook
+                    </div>
+                  </a>
+
+                  <a class="dropdown-item socialMedia" target="_blank" href="https://twitter.com/intent/tweet/?text=Leazy%20-%20Student%20portal%20where%20you%20can%20find%20ideal%20apartments%2C%20trade%20furniture%2C%20and%20sublease!&url=https%3A%2F%2Fwww.leazy.org">
+                    <div class="social">
+                      <svg class="social-icons" viewBox="0 0 64 64" width="32" height="32"><circle cx="32" cy="32" r="31" fill="#00aced"></circle><path d="M48,22.1c-1.2,0.5-2.4,0.9-3.8,1c1.4-0.8,2.4-2.1,2.9-3.6c-1.3,0.8-2.7,1.3-4.2,1.6 C41.7,19.8,40,19,38.2,19c-3.6,0-6.6,2.9-6.6,6.6c0,0.5,0.1,1,0.2,1.5c-5.5-0.3-10.3-2.9-13.5-6.9c-0.6,1-0.9,2.1-0.9,3.3 c0,2.3,1.2,4.3,2.9,5.5c-1.1,0-2.1-0.3-3-0.8c0,0,0,0.1,0,0.1c0,3.2,2.3,5.8,5.3,6.4c-0.6,0.1-1.1,0.2-1.7,0.2c-0.4,0-0.8,0-1.2-0.1 c0.8,2.6,3.3,4.5,6.1,4.6c-2.2,1.8-5.1,2.8-8.2,2.8c-0.5,0-1.1,0-1.6-0.1c2.9,1.9,6.4,2.9,10.1,2.9c12.1,0,18.7-10,18.7-18.7 c0-0.3,0-0.6,0-0.8C46,24.5,47.1,23.4,48,22.1z" fill="white"></path></svg>
+                      Twitter
+                    </div>
+                  </a>
+
+                  <a class="dropdown-item socialMedia" target="_blank" href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https%3A%2F%2Fwww.leazy.org&amp;title=Leazy%20-%20Student%20portal%20where%20you%20can%20find%20ideal%20apartments%2C%20trade%20furniture%2C%20and%20sublease!&amp;summary=Leazy%20-%20Student%20portal%20where%20you%20can%20find%20ideal%20apartments%2C%20trade%20furniture%2C%20and%20sublease!&amp;source=https%3A%2F%2Fwww.leazy.org">
+                    <div class="social">
+                      <svg class="social-icons" viewBox="0 0 64 64" width="32" height="32"><circle cx="32" cy="32" r="31" fill="#007fb1"></circle><path d="M20.4,44h5.4V26.6h-5.4V44z M23.1,18c-1.7,0-3.1,1.4-3.1,3.1c0,1.7,1.4,3.1,3.1,3.1 c1.7,0,3.1-1.4,3.1-3.1C26.2,19.4,24.8,18,23.1,18z M39.5,26.2c-2.6,0-4.4,1.4-5.1,2.8h-0.1v-2.4h-5.2V44h5.4v-8.6 c0-2.3,0.4-4.5,3.2-4.5c2.8,0,2.8,2.6,2.8,4.6V44H46v-9.5C46,29.8,45,26.2,39.5,26.2z" fill="white"></path></svg>
+                      LinkedIn
+                    </div>
+                  </a>
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item donate" target="_blank" href="http://www.google.com">
+                    Buy me a coffee
+                  </a>
+                </div>
+              </li>
+          </ul>
+      </div>
+    </div>
+  </nav>
+  
+  <body>
+    <div class="container title-border">
+      <div class="no-message">
+        <h1 class="sublet-title">Subleasing Portal</h1>
+        <p>Post units you're subleasing, or contact an owner to secure a sublease.</p>
+      </div>
+    </div>
+    <div class="container-cards">
+      <div class="container search">
+
+        <div class="row">
+          <div class="col-md-6">
+            <input class="searchTerm" type="search" placeholder="Search Posts" aria-describedby="button-addon1" class="form-control border-20 bg-light">
+            <button type="submit" class="searchButton" onclick="searchQuery()">
+              <i class="fa fa-search" aria-hidden="true"></i>
+            </button>
+          </div>
+          <div class="col-md-6">
+            <button type="button" class="btn btn-info btn-lg post" data-toggle="modal" data-target="#exampleModal">
               <i class="fa fa-plus" aria-hidden="true"></i> &nbsp;Post Sublease Info</button>
           </div>
-            <% if (data.length === 0) {%>
-                <% if (path.indexOf("search") !== -1) { %>
-                  <p class="none-message" style="text-align: center">No posts were found. Try generalizing or shortening your search.</p>
-                <% } else {  %>
-                  <p class="none-message" style="text-align: center">No posts were found.</p>
-                <% } %>
-
-            <% } %>
-            <% for(var i = 0; i < data.length; ++i) { %>
-            <% var difference = diff(Date.now(), data[i].Date); %>
-            <div class="card mb-3" style="width: 840px; max-height: 1200px;">
-                <div class="row no-gutters">
-                  <div class="col-md-4">
-                    <% var relImages = data[i].allImages.split(','); %>
-                    <div id="imageCarousel-<%=i%>" class="carousel slide" data-ride="carousel">
-                      <% if (relImages.length > 1) { %>
-                        <ol class="carousel-indicators">
-                          <% for (let j = 0; j < relImages.length; ++j) { %>
-                            <% if (j === 0) { %>
-                              <li data-target="#imageCarousel-<%=i%>" data-slide-to="<%=j%>" class="active"></li>
-                            <% } else { %>
-                              <li data-target="#imageCarousel-<%=i%>" data-slide-to="<%=j%>"></li>
-                            <% } %>
-                          <% } %>
-                        </ol>
-                      <% } %>
-                      <div class="carousel-inner">
-                        <% for (let j = 0; j < relImages.length; ++j) { %>
-                          <% if (j === 0) { %>
-                            <div class="carousel-item active">
-                              <img src="<%= relImages[j] %>" class="card-img d-block w-100" onclick="displayFull('<%= relImages[j] %>', '<%= data[i].ApartmentName %>', '<%=data[i].UnitBeds%>', '<%=data[i].UnitBaths%>', '<%=data[i].UnitPrice%>')" title="Click to enlarge">
-                            </div>
-                          <% } else { %>
-                            <div class="carousel-item">
-                              <img src="<%= relImages[j] %>" class="card-img d-block w-100" onclick="displayFull('<%= relImages[j] %>', '<%= data[i].ApartmentName %>', '<%=data[i].UnitBeds%>', '<%=data[i].UnitBaths%>', '<%=data[i].UnitPrice%>')" title="Click to enlarge">
-                            </div>
-                          <% } %>
-                        <% } %>
-                        <% if (relImages.length > 1) { %>
-                          <a class="carousel-control-prev" href="#imageCarousel-<%=i%>" role="button" data-slide="prev">
-                            <span class="carousel-control-prev-icon" ></span>
-                            <span class="sr-only">Previous</span>
-                          </a>
-                          <a class="carousel-control-next" href="#imageCarousel-<%=i%>" role="button" data-slide="next">
-                            <span class="carousel-control-next-icon"></span>
-                            <span class="sr-only">Next</span>
-                          </a>
-                        <% } %>
-                    </div>
+        </div>
+        
+      </div>
+        <% if (data.length === 0) {%>
+            <% if (path.indexOf("search") !== -1) { %>
+              <div class="noresults row">
+                <div class="container">
+                  <div class="col-md-12">
+                    <img src="/images/Picture1.png" class="noposts">
+                  </div>
+                  <div class="col-md-auto">
+                    <text class="none-message">No posts were found. Please <strong>generalize</strong> or <strong>shorten</strong> your search.</text>
                   </div>
                 </div>
-                <div class="col-md-8">
-                    <div class="card-body">
-                        <div class="card-header-top">
-                            <h5 class="card-title">
-                              <i class="fa fa-bed" aria-hidden="true"></i>
-                              <% if (data[i].UnitBeds === 0) { %> 
-                                <text>&nbsp;Studio bd &nbsp;</text>
-                              <% } else { %>
-                                <text>&nbsp;<%= data[i].UnitBeds %> bd &nbsp;</text>
-                              <% } %>
-                              <i class="fa fa-bath" aria-hidden="true"></i>
-                              <text>&nbsp;<%= data[i].UnitBaths %> ba</text>
-                            </h5>
-                            <button type="button" class="btn btn-primary" onclick="sharePost('<%=data[i].PublicID%>')">
-                                <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="share" class="svg-inline--fa fa-share fa-w-16 " role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M503.691 189.836L327.687 37.851C312.281 24.546 288 35.347 288 56.015v80.053C127.371 137.907 0 170.1 0 322.326c0 61.441 39.581 122.309 83.333 154.132 13.653 9.931 33.111-2.533 28.077-18.631C66.066 312.814 132.917 274.316 288 272.085V360c0 20.7 24.3 31.453 39.687 18.164l176.004-152c11.071-9.562 11.086-26.753 0-36.328z"></path></svg>
-                                Share
-                            </button>
-                        </div>
-                        <% if (data[i].AptWebsite && data[i].AptWebsite !== "") { %>
-                          <i>
-                            <text class="card-text" >Unit located in 
-                              <strong><a href="<%=data[i].AptWebsite%>" target="_blank"><%=data[i].ApartmentName %></a></strong>
-                            </text>
-                          </i>
+              </div>
+            <% } else {  %>
+              <div class="noresults row">
+                <div class="container">
+                  <div class="col-md-12">
+                    <img src="/images/Picture1.png" class="noposts">
+                  </div>
+                  <div class="col-md-auto">
+                    <text class="none-message">Be the first to <strong>post</strong> and <strong>find a subtenant</strong>!</text>
+                  </div>
+                </div>
+              </div>
+            <% } %>
+
+        <% } %>
+        <% for(var i = 0; i < data.length; ++i) { %>
+        <% var difference = diff(Date.now(), data[i].Date); %>
+        <div class="card mb-3 col">
+            <div class="row no-gutters">
+              <div class="col-md-4">
+                <% var relImages = data[i].allImages.split(','); %>
+                <div id="imageCarousel-<%=i%>" class="carousel slide" data-ride="carousel">
+                  <% if (relImages.length > 1) { %>
+                    <ol class="carousel-indicators">
+                      <% for (let j = 0; j < relImages.length; ++j) { %>
+                        <% if (j === 0) { %>
+                          <li data-target="#imageCarousel-<%=i%>" data-slide-to="<%=j%>" class="active"></li>
                         <% } else { %>
-                          <i>
-                            <text class="card-text">
-                              Unit located in <strong><%=data[i].ApartmentName %></strong>
-                            </text>
-                          </i>
+                          <li data-target="#imageCarousel-<%=i%>" data-slide-to="<%=j%>"></li>
                         <% } %>
-                        <p class="card-text"><small class="text-muted">Posted <%= difference %></small></p>
-                        <p style="font-size: 22px;">
-                            <% if (data[i].UnitPrice === 0) { %>
-                              <a class="info-tooltip" data-toggle="tooltip" data-placement="right" title="Rent per Month" >
-                                <text style="color:green;"><b>FREE &nbsp;&nbsp;&nbsp;</b></text>
-                              </a>
-                                
-                            <% } %>
-                            <% if (data[i].UnitPrice !== 0) { %>
-                              <a class="info-tooltip" data-toggle="tooltip" data-placement="right" title="Rent per Month">
-                                <text style="color: green;"><b>$<%= data[i].UnitPrice %>/mo &nbsp;&nbsp;&nbsp;</b></text>
-                              </a>
-                            <% } %>
-                            <a class="info-tooltip" data-toggle="tooltip" data-placement="right" title="University Attended">
-                              <img src="/images/location.png" style="width: 20px; height: 20px;">
-                              <b><%= data[i].University %></b>
-                            </a>
-                          </p>
-
-                          <p class="info-tooltip" class="card-text" style="font-size: 18px;">
-                            <% if (data[i].Furnished === 1) { %>
-                              <a data-toggle="tooltip" data-placement="right" title="Unit comes furnished">
-                                <i class='fas fa-couch'></i>
-                                <text> Furnished</text>
-                              </a>
-
-                              <a data-toggle="tooltip" data-placement="right" title="Preferred gender of subtenant">
-                                <text class="gender"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Pfd. Gender:</b> <%= data[i].Gender %></text>
-                              </a>
-                              
-                            <% } else { %>
-                              <a data-toggle="tooltip" data-placement="right" title="Preferred gender of subtenant">
-                                <text class="gender"><b>Pfd. Gender:</b> <%= data[i].Gender %></text>
-                              </a>
-                              
-                            <% } %>
-                            <text>&nbsp;&nbsp;&nbsp;&nbsp;</text>
-                            <a class="info-tooltip" data-toggle="tooltip" data-placement="right" data-html="true" 
-                            title="Start Date: <%=data[i].StartDate %> <br> End Date: <%=data[i].EndDate %> <br>
-                            Term Duration: <%=data[i].Duration %> Months">
-                              <i class="fa fa-calendar"></i>
-                              <text> Sublease Term</text>
-                            </a>
-                          </p>
-                        <p class="card-text"><%= data[i].UnitDescription %></p>
-                        <hr>
-                    </div>
-                    <div class="card-footer-bottom">
-                        <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#interestedModal<%=i%>">
-                            Contact Owner
-                        </button>
-                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#reportModal<%=i%>">
-                            <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-flag" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                <path fill-rule="evenodd" d="M3.5 1a.5.5 0 0 1 .5.5v13a.5.5 0 0 1-1 0v-13a.5.5 0 0 1 .5-.5z"/>
-                                <path fill-rule="evenodd" d="M3.762 2.558C4.735 1.909 5.348 1.5 6.5 1.5c.653 0 1.139.325 1.495.562l.032.022c.391.26.646.416.973.416.168 0 .356-.042.587-.126a8.89 8.89 0 0 0 .593-.25c.058-.027.117-.053.18-.08.57-.255 1.278-.544 2.14-.544a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-.5.5c-.638 0-1.18.21-1.734.457l-.159.07c-.22.1-.453.205-.678.287A2.719 2.719 0 0 1 9 9.5c-.653 0-1.139-.325-1.495-.562l-.032-.022c-.391-.26-.646-.416-.973-.416-.833 0-1.218.246-2.223.916a.5.5 0 1 1-.515-.858C4.735 7.909 5.348 7.5 6.5 7.5c.653 0 1.139.325 1.495.562l.032.022c.391.26.646.416.973.416.168 0 .356-.042.587-.126.187-.068.376-.153.593-.25.058-.027.117-.053.18-.08.456-.204 1-.43 1.64-.512V2.543c-.433.074-.83.234-1.234.414l-.159.07c-.22.1-.453.205-.678.287A2.719 2.719 0 0 1 9 3.5c-.653 0-1.139-.325-1.495-.562l-.032-.022c-.391-.26-.646-.416-.973-.416-.833 0-1.218.246-2.223.916a.5.5 0 0 1-.554-.832l.04-.026z"/>
-                            </svg>
-                            Report
-                        </button>
-
-                        <p>
-                            <svg id="person" viewBox="0 0 16 16" class="bi bi-person-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                <path fill-rule="evenodd" d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
-                            </svg>
-                            <span style="vertical-align: middle;"><b><%= data[i].NumInterested %></b>&nbsp;interested</span>    
-                        </p>
-                      </div>
+                      <% } %>
+                    </ol>
+                  <% } %>
+                  <div class="carousel-inner">
+                    <% for (let j = 0; j < relImages.length; ++j) { %>
+                      <% if (j === 0) { %>
+                        <div class="carousel-item active">
+                          <img src="<%= relImages[j] %>" class="card-img d-block w-100" onclick="displayFull('<%= relImages[j] %>', '<%= data[i].ApartmentName %>', '<%=data[i].UnitBeds%>', '<%=data[i].UnitBaths%>', '<%=data[i].UnitPrice%>')" title="Click to enlarge">
+                        </div>
+                      <% } else { %>
+                        <div class="carousel-item">
+                          <img src="<%= relImages[j] %>" class="card-img d-block w-100" onclick="displayFull('<%= relImages[j] %>', '<%= data[i].ApartmentName %>', '<%=data[i].UnitBeds%>', '<%=data[i].UnitBaths%>', '<%=data[i].UnitPrice%>')" title="Click to enlarge">
+                        </div>
+                      <% } %>
+                    <% } %>
+                    <% if (relImages.length > 1) { %>
+                      <a class="carousel-control-prev" href="#imageCarousel-<%=i%>" role="button" data-slide="prev">
+                        <span class="carousel-control-prev-icon" ></span>
+                        <span class="sr-only">Previous</span>
+                      </a>
+                      <a class="carousel-control-next" href="#imageCarousel-<%=i%>" role="button" data-slide="next">
+                        <span class="carousel-control-next-icon"></span>
+                        <span class="sr-only">Next</span>
+                      </a>
+                    <% } %>
                 </div>
-                </div>
+              </div>
             </div>
-
-            <div id="reportModal<%=i%>" class="modal fade" tabindex="-1">
-              <div class="modal-dialog">
-                  <div class="modal-content">
-                      <div class="modal-header">
-                          <% if (data[i].UnitBeds === 0) { %>
-                            <h5 class="modal-title"><strong>Are you sure you want to report this post: <br><em>Studio bed, <%=data[i].UnitBaths%> bath, $<%=data[i].UnitPrice%>/mo?</em></strong></h5>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <div class="row card-header-top">
+                        <h5 class="col-md-auto card-title">
+                          <i class="fa fa-bed" aria-hidden="true"></i>
+                          <% if (data[i].UnitBeds === 0) { %> 
+                            <text>&nbsp;Studio bd &nbsp;</text>
                           <% } else { %>
-                            <h5 class="modal-title"><strong>Are you sure you want to report this post: <br><em><%=data[i].UnitBeds%> bed, <%=data[i].UnitBaths%> bath, $<%=data[i].UnitPrice%>/mo?</em></strong></h5>
+                            <text>&nbsp;<%= data[i].UnitBeds %> bd &nbsp;</text>
                           <% } %>
-                          <button type="button" class="close" data-dismiss="modal">&times;</button>
-                      </div>
-                      <div class="modal-body">
-                          <p style="font-size:20px">Please 
-                            ensure that this post is offensive, obscene, contains inaccurate/misleading information, or violates our terms of service before you report it to us.</p>
-                      </div>
-                      <div class="modal-footer">
-                          <button type="button" class="btn btn-secondary" data-dismiss="modal">
-                            Cancel
-                          </button>
-                          <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="reportSublet('<%=data[i].PublicID%>','<%=data[i].UnitBeds%>','<%=data[i].UnitBaths%>','<%=data[i].StartDate%>','<%=data[i].EndDate%>','<%=data[i].University%>')">
-                            Report</button>
-                      </div>
+                          <i class="fa fa-bath" aria-hidden="true"></i>
+                          <text>&nbsp;<%= data[i].UnitBaths %> ba</text>
+                        </h5>
+                        <button type="button" class="col-md-auto btn btn-primary" onclick="sharePost('<%=data[i].PublicID%>')">
+                            <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="share" class="svg-inline--fa fa-share fa-w-16 " role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M503.691 189.836L327.687 37.851C312.281 24.546 288 35.347 288 56.015v80.053C127.371 137.907 0 170.1 0 322.326c0 61.441 39.581 122.309 83.333 154.132 13.653 9.931 33.111-2.533 28.077-18.631C66.066 312.814 132.917 274.316 288 272.085V360c0 20.7 24.3 31.453 39.687 18.164l176.004-152c11.071-9.562 11.086-26.753 0-36.328z"></path></svg>
+                            Share
+                        </button>
+                    </div>
+                    <% if (data[i].AptWebsite && data[i].AptWebsite !== "") { %>
+                      <i>
+                        <text class="card-text" >Unit located in 
+                          <strong><a href="<%=data[i].AptWebsite%>" target="_blank"><%=data[i].ApartmentName %></a></strong>
+                        </text>
+                      </i>
+                    <% } else { %>
+                      <i>
+                        <text class="card-text">
+                          Unit located in <strong><%=data[i].ApartmentName %></strong>
+                        </text>
+                      </i>
+                    <% } %>
+                    <p class="card-text"><small class="text-muted">Posted <%= difference %></small></p>
+                    <hr>
+                    <p style="font-size: 22px;">
+                        <% if (data[i].UnitPrice === 0) { %>
+                          <a class="info-tooltip" data-toggle="tooltip" data-placement="right" title="Rent per Month" >
+                            <text style="color:green;"><b>FREE &nbsp;&nbsp;&nbsp;</b></text>
+                          </a>
+                            
+                        <% } %>
+                        <% if (data[i].UnitPrice !== 0) { %>
+                          <a class="info-tooltip" data-toggle="tooltip" data-placement="right" title="Rent per Month">
+                            <text style="color: green;"><b>$<%= data[i].UnitPrice %>/mo &nbsp;&nbsp;&nbsp;</b></text>
+                          </a>
+                        <% } %>
+                        <a class="info-tooltip" data-toggle="tooltip" data-placement="right" title="University Attended">
+                          <img src="/images/location.png" style="width: 20px; height: 20px;">
+                          <b><%= data[i].University %></b>
+                        </a>
+                      </p>
+
+                      <p class="info-tooltip" class="card-text" style="font-size: 18px;">
+                        <% if (data[i].Furnished === 1) { %>
+                          <a data-toggle="tooltip" data-placement="right" title="Unit comes furnished">
+                            <i class='fas fa-couch'></i>
+                            <text> Furnished</text>
+                          </a>
+
+                          <a data-toggle="tooltip" data-placement="right" title="Preferred gender of subtenant">
+                            <text class="gender"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Pfd. Gender:</b> <%= data[i].Gender %></text>
+                          </a>
+                          
+                        <% } else { %>
+                          <a data-toggle="tooltip" data-placement="right" title="Preferred gender of subtenant">
+                            <text class="gender"><b>Pfd. Gender:</b> <%= data[i].Gender %></text>
+                          </a>
+                          
+                        <% } %>
+                        <text>&nbsp;&nbsp;&nbsp;&nbsp;</text>
+                        <a class="info-tooltip" data-toggle="tooltip" data-placement="right" data-html="true" 
+                        title="Start Date: <%=data[i].StartDate %> <br> End Date: <%=data[i].EndDate %> <br>
+                        Term Duration: <%=data[i].Duration %> Months">
+                          <i class="fa fa-calendar"></i>
+                          <text> Sublease Term</text>
+                        </a>
+                      </p>
+                    <p class="card-text"><%= data[i].UnitDescription %></p>
+                    <hr>
+                </div>
+                <div class="card-footer-bottom">
+                    <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#interestedModal<%=i%>">
+                        Contact Owner
+                    </button>
+                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#reportModal<%=i%>">
+                        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-flag" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M3.5 1a.5.5 0 0 1 .5.5v13a.5.5 0 0 1-1 0v-13a.5.5 0 0 1 .5-.5z"/>
+                            <path fill-rule="evenodd" d="M3.762 2.558C4.735 1.909 5.348 1.5 6.5 1.5c.653 0 1.139.325 1.495.562l.032.022c.391.26.646.416.973.416.168 0 .356-.042.587-.126a8.89 8.89 0 0 0 .593-.25c.058-.027.117-.053.18-.08.57-.255 1.278-.544 2.14-.544a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-.5.5c-.638 0-1.18.21-1.734.457l-.159.07c-.22.1-.453.205-.678.287A2.719 2.719 0 0 1 9 9.5c-.653 0-1.139-.325-1.495-.562l-.032-.022c-.391-.26-.646-.416-.973-.416-.833 0-1.218.246-2.223.916a.5.5 0 1 1-.515-.858C4.735 7.909 5.348 7.5 6.5 7.5c.653 0 1.139.325 1.495.562l.032.022c.391.26.646.416.973.416.168 0 .356-.042.587-.126.187-.068.376-.153.593-.25.058-.027.117-.053.18-.08.456-.204 1-.43 1.64-.512V2.543c-.433.074-.83.234-1.234.414l-.159.07c-.22.1-.453.205-.678.287A2.719 2.719 0 0 1 9 3.5c-.653 0-1.139-.325-1.495-.562l-.032-.022c-.391-.26-.646-.416-.973-.416-.833 0-1.218.246-2.223.916a.5.5 0 0 1-.554-.832l.04-.026z"/>
+                        </svg>
+                        Report
+                    </button>
+
+                    <p>
+                        <svg id="person" viewBox="0 0 16 16" class="bi bi-person-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+                        </svg>
+                        <span style="vertical-align: middle;"><b><%= data[i].NumInterested %></b>&nbsp;interested</span>    
+                    </p>
+                  </div>
+            </div>
+            </div>
+        </div>
+
+        <div id="reportModal<%=i%>" class="modal fade" tabindex="-1">
+          <div class="modal-dialog">
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <% if (data[i].UnitBeds === 0) { %>
+                        <h5 class="modal-title"><strong>Are you sure you want to report this post: <br><em>Studio bed, <%=data[i].UnitBaths%> bath, $<%=data[i].UnitPrice%>/mo?</em></strong></h5>
+                      <% } else { %>
+                        <h5 class="modal-title"><strong>Are you sure you want to report this post: <br><em><%=data[i].UnitBeds%> bed, <%=data[i].UnitBaths%> bath, $<%=data[i].UnitPrice%>/mo?</em></strong></h5>
+                      <% } %>
+                      <button type="button" class="close" data-dismiss="modal">&times;</button>
+                  </div>
+                  <div class="modal-body">
+                      <p style="font-size:20px">Please 
+                        ensure that this post is offensive, obscene, contains inaccurate/misleading information, or violates our terms of service before you report it to us.</p>
+                  </div>
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                        Cancel
+                      </button>
+                      <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="reportSublet('<%=data[i].PublicID%>','<%=data[i].UnitBeds%>','<%=data[i].UnitBaths%>','<%=data[i].StartDate%>','<%=data[i].EndDate%>','<%=data[i].University%>')">
+                        Report</button>
                   </div>
               </div>
           </div>
+      </div>
 
-            <div class="modal fade" id="interestedModal<%=i%>" tabindex="-1" role="dialog" aria-labelledby="modal-label" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h5 class="modal-title" id="modal-label">Fill out the information below and we'll send an email to the owner letting them know you're interested!</h5>
-                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                      </button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="interested-form-<%=i%>" class="interested-form">
-                            <p class="num" style="display:none"><%= data[i].PublicID %></p>
-                            <div class="form-group">
-                                <label for="interested-title-<%=i%>">Your Name</label>
-                                <input type="text" class="form-control interested-title" id="interested-title-<%=i%>" placeholder="Enter name" required>
-                            </div>
-    
-                            <div class="form-group">
-                              <label for="interested-email-<%=i%>">Contact Information (email or phone #)</label>
-                              <input type="text" class="form-control interested-email" id="interested-email-<%=i%>" aria-describedby="emailHelp" placeholder="Enter contact info" required>
-                              <small id="help" class="form-text text-muted">We won't display or share this information with anyone other than the owner of this post.</small>
-                            </div>
-    
-                            <div class="form-group">
-                                <label for="interested-description-<%=i%>">Email Text</label>
-                                <textarea class="form-control interested-description" id="interested-description-<%=i%>" rows="5" ></textarea>
-                              </div>
-    
-                            <div class="form-group">
-                              <label for="interested-university-<%=i%>">University You Attend</label>
-                              <input type="text" class="form-control interested-university" id="interested-university-<%=i%>" placeholder="i.e., 'UT Austin'" required>
-                            </div>
-    
-                          </form>
-                    </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                      <button form="interested-form-<%=i%>" id="interested-button-<%=i%>" value="Submit" class="btn btn-primary">Send Email</button>
-                    </div>
-                  </div>
-                </div>
-              </div> 
-
-              
-          <div id="myModal" class="myModal">
-
-            <!-- The Close Button -->
-            <span class="close" onclick="closeModal()">&times;</span>
-          
-            <!-- Modal Content (The Image) -->
-            <img class="modal-content-img" id="img01">
-          
-            <!-- Modal Caption (Image Text) -->
-            <div id="caption"><%= data[i].UnitName %></div>
-          </div>
-            <% } %>
-        </div>
-
-
-       <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="modal-label" aria-hidden="true">
+        <div class="modal fade" id="interestedModal<%=i%>" tabindex="-1" role="dialog" aria-labelledby="modal-label" aria-hidden="true">
             <div class="modal-dialog" role="document">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h5 class="modal-title" id="modal-label">Fill out the apartment unit information below:</h5>
+                  <h5 class="modal-title" id="modal-label">Fill out the information below and we'll send an email to the owner letting them know you're interested!</h5>
                   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                   </button>
                 </div>
                 <div class="modal-body">
-                    <form id="post-form" enctype="multipart/form-data">
-                        <div class="form-row">
-                          <div class="col">
-                            <label for="unit-complex-title">Apartment Name</label>
-                            <input type="text" class="form-control" id="unit-complex-title" placeholder="Enter apartment" required>
-                          </div>
-                          <div class="col">
-                            <label for="unit-website">Apt. Website (optional)</label>
-                            <input type="text" class="form-control" id="unit-website" placeholder="Enter website">
-                          </div>
-                        </div>
-
-                        <div class="form-row">
-                          <div class="col">
-                            <label for="unit-beds">Number of Bedrooms</label>
-                            <input type="number" class="form-control" id="unit-beds" placeholder="Enter beds" required>
-                          </div>
-                          <div class="col">
-                            <label for="unit-baths">Number of Bathrooms</label>
-                            <input type="number" class="form-control" id="unit-baths" placeholder="Enter baths" required>
-                          </div>
-                          <small id="help" class="form-text text-muted">If you are subletting a studio apartment, please enter 0 for number of bedrooms.</small>
+                    <form id="interested-form-<%=i%>" class="interested-form">
+                        <p class="num" style="display:none"><%= data[i].PublicID %></p>
+                        <div class="form-group">
+                            <label for="interested-title-<%=i%>">Your Name</label>
+                            <input type="text" class="form-control interested-title" id="interested-title-<%=i%>" placeholder="Enter name" required>
                         </div>
 
                         <div class="form-group">
-                            <label for="unit-price">Approximate Rent Price Per Month (omit $ sign)</label>
-                            <input type="number" step="0.01" class="form-control" id="unit-price" placeholder="Enter price" required>
-                            <!-- <small id="help" class="form-text text-muted">If the item is free, please input 0.</small> -->
-                        </div>
-
-                        <div class="form-group"  style="font-size:17px;">
-                          <div class="form-check" style="vertical-align: center;">
-                            <input class="form-check-input" type="checkbox" id="furnishedCheck">
-                            <label class="form-check-label" for="furnishedCheck">
-                              Check if unit is already furnished
-                            </label>
-                          </div>
-                        </div>
-
-                        <div class="form-row">
-                          <div class="col">
-                            <label for="unit-start-date">Sublease Start Date</label>
-                            <input type="text" class="form-control datepicker readonly" id="unit-start-date" placeholder="Select start date" required>
-                          </div>
-                          <div class="col">
-                            <label for="unit-end-date">Sublease End Date</label>
-                            <input type="text" class="form-control datepicker readonly" id="unit-end-date" placeholder="Select end date" required>
-                          </div>
+                          <label for="interested-email-<%=i%>">Contact Information (email or phone #)</label>
+                          <input type="text" class="form-control interested-email" id="interested-email-<%=i%>" aria-describedby="emailHelp" placeholder="Enter contact info" required>
+                          <small id="help" class="form-text text-muted">We won't display or share this information with anyone other than the owner of this post.</small>
                         </div>
 
                         <div class="form-group">
-                          <label for="unit-gender" class="my-1 mr-2">Preferred Gender of Tenant</label>
-                          <select class="custom-select my-1 mr-sm-2" style="font-size: 17px;" id="unit-gender" required>
-                            <option value="">Choose...</option>
-                            <option value="1">Male</option>
-                            <option value="2">Female</option>
-                            <option value="3">Any</option>
-                          </select>
-                        </div>
-
-                        <div class="form-group">
-                          <label for="unit-email">Email address</label>
-                          <input type="email" class="form-control" id="unit-email" aria-describedby="emailHelp" placeholder="Enter email" required>
-                          <small id="help" class="form-text text-muted">We won't display this email when you post or share it with anyone.</small>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="unit-description">Optional Unit Description (max 1000 characters)</label>
-                            <textarea class="form-control" id="unit-description" rows="3" maxlength=1000></textarea>
+                            <label for="interested-description-<%=i%>">Email Text</label>
+                            <textarea class="form-control interested-description" id="interested-description-<%=i%>" rows="5" ></textarea>
                           </div>
 
                         <div class="form-group">
-                          <label for="unit-university">University You Attend</label>
-                          <input type="text" class="form-control" id="unit-university" placeholder="i.e., 'UT Austin'" required>
+                          <label for="interested-university-<%=i%>">University You Attend</label>
+                          <input type="text" class="form-control interested-university" id="interested-university-<%=i%>" placeholder="i.e., 'UT Austin'" required>
                         </div>
 
-                        <div class="form-group files" id="files1">
-                          <label for="unit-image">Images (optional, maximum of 6)</label>
-                          <br>
-                          <span class="btn btn-file btn-info">
-                            Upload Images &nbsp;<i class="fa fa-upload"></i>
-                            <input type="file" name="files1" class="form-control-file" accept="image/*" id="unit-image" multiple />
-                          </span>
-                          <ul class="fileList"></ul>
-                        </div>
-                    </form>
+                      </form>
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                  <button form="post-form" value="Submit" id="sublease-post" class="btn btn-primary" >Post Unit</button>
+                  <button form="interested-form-<%=i%>" id="interested-button-<%=i%>" value="Submit" class="btn btn-primary">Send Email</button>
                 </div>
               </div>
             </div>
           </div> 
-            
-    </body>
-    <script>
-      $(document).ready(function(){
-        $('[data-toggle="tooltip"]').tooltip();
-      });
-    </script>
-    <script src="/js/sublet.js"></script>
-    </html>
+
+          
+      <div id="myModal" class="myModal">
+
+        <!-- The Close Button -->
+        <span class="close" onclick="closeModal()">&times;</span>
+      
+        <!-- Modal Content (The Image) -->
+        <img class="modal-content-img" id="img01">
+      
+        <!-- Modal Caption (Image Text) -->
+        <div id="caption"><%= data[i].UnitName %></div>
+      </div>
+        <% } %>
+    </div>
+
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="modal-label" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modal-label">Fill out the apartment unit information below:</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+                <form id="post-form" enctype="multipart/form-data">
+                    <div class="form-row">
+                      <div class="col">
+                        <label for="unit-complex-title">Apt. Complex Name</label>
+                        <input type="text" class="form-control" id="unit-complex-title" placeholder="Enter apartment" required>
+                      </div>
+                      <div class="col">
+                        <label for="unit-website">Apt. Website (optional)</label>
+                        <input type="text" class="form-control" id="unit-website" placeholder="Enter website">
+                      </div>
+                    </div>
+
+                    <div class="form-row">
+                      <div class="col">
+                        <label for="unit-beds">Number of Bedrooms</label>
+                        <input type="number" class="form-control" id="unit-beds" placeholder="Enter beds" required>
+                      </div>
+                      <div class="col">
+                        <label for="unit-baths">Number of Bathrooms</label>
+                        <input type="number" class="form-control" id="unit-baths" placeholder="Enter baths" required>
+                      </div>
+                      <small id="help" class="form-text text-muted">If you are subletting a studio apartment, please enter 0 for number of bedrooms.</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="unit-price">Approximate Rent Price Per Month (omit $ sign)</label>
+                        <input type="number" step="0.01" class="form-control" id="unit-price" placeholder="Enter price" required>
+                        <!-- <small id="help" class="form-text text-muted">If the item is free, please input 0.</small> -->
+                    </div>
+
+                    <div class="form-group"  style="font-size:17px;">
+                      <div class="form-check" style="vertical-align: center;">
+                        <input class="form-check-input" type="checkbox" id="furnishedCheck">
+                        <label class="form-check-label" for="furnishedCheck">
+                          Check if unit is already furnished
+                        </label>
+                      </div>
+                    </div>
+
+                    <div class="form-row">
+                      <div class="col">
+                        <label for="unit-start-date">Sublease Start Date</label>
+                        <input type="text" class="form-control datepicker readonly" id="unit-start-date" placeholder="Select start date" required>
+                      </div>
+                      <div class="col">
+                        <label for="unit-end-date">Sublease End Date</label>
+                        <input type="text" class="form-control datepicker readonly" id="unit-end-date" placeholder="Select end date" required>
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="unit-gender" class="my-1 mr-2">Preferred Gender of Tenant</label>
+                      <select class="custom-select my-1 mr-sm-2" style="font-size: 17px;" id="unit-gender" required>
+                        <option value="">Choose...</option>
+                        <option value="1">Male</option>
+                        <option value="2">Female</option>
+                        <option value="3">Any</option>
+                      </select>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="unit-email">Email address</label>
+                      <input type="email" class="form-control" id="unit-email" aria-describedby="emailHelp" placeholder="Enter email" required>
+                      <small id="help" class="form-text text-muted">We won't display this email when you post or share it with anyone.</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="unit-description">Optional Unit Description (max 1000 characters)</label>
+                        <textarea class="form-control" id="unit-description" rows="3" maxlength=1000></textarea>
+                      </div>
+
+                    <div class="form-group">
+                      <label for="unit-university">University You Attend</label>
+                      <input type="text" class="form-control" id="unit-university" placeholder="i.e., 'UT Austin'" required>
+                    </div>
+
+                    <div class="form-group files" id="files1">
+                      <label for="unit-image">Images (optional, maximum of 6)</label>
+                      <br>
+                      <span class="btn btn-file btn-info">
+                        Upload Images &nbsp;<i class="fa fa-upload"></i>
+                        <input type="file" name="files1" class="form-control-file" accept="image/*" id="unit-image" multiple />
+                      </span>
+                      <ul class="fileList"></ul>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button form="post-form" value="Submit" id="sublease-post" class="btn btn-primary" >Post Unit</button>
+            </div>
+          </div>
+        </div>
+      </div> 
+        
+</body>
+
+<footer class="page-footer">
+  <div class="container footer">
+    <div class="footer-copyright col-md-6">
+      <img class="footer-logo" src="/images/logofooter.png">
+      <div class="copyright">
+        <span style="font-family:Arial, Helvetica, sans-serif"> &nbsp;©</span>
+        <text>2020</text>
+      </div>
+    </div>
+    <div class="col-md-6 privacy">
+      <a href="/privacy" target="_blank"> Privacy Policy</a>
+    </div>
+  </div>
+
+</footer>
+
+<script>
+  $(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip();
+  });
+</script>
+<script src="/js/sublet.js"></script>
+</html>

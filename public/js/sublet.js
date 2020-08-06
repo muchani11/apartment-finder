@@ -145,6 +145,14 @@ $('#post-form').on('submit', function(event) {
         return;
     }
 
+    var startDate = $('#unit-start-date').val();
+    var endDate = $('#unit-end-date').val();
+
+    if (!validDates(startDate, endDate)) {
+        toastr.options.timeOut = 4000;
+        toastr.error('The start date must be before the end date');
+        return;
+    }
     document.getElementById('sublease-post').setAttribute('disabled', 'disabled');
     $('#sublease-post').html('Submitting Post...');
 
@@ -157,13 +165,13 @@ $('#post-form').on('submit', function(event) {
     var baths = $('#unit-baths').val();
     var name = `${complex} ${beds} beds ${baths} baths ${beds} bd ${baths} ba ${beds} bds ${baths} bas`;
     var rent = $('#unit-price').val();
-    var startDate = $('#unit-start-date').val();
+
     var furnished;
     if ($('#furnishedCheck').is(':checked')) {
         furnished = 1;
     }
     else furnished = 0;
-    var endDate = $('#unit-end-date').val();
+
     var gender = $('#unit-gender option:selected').text();
     var email = $('#unit-email').val();
     var description = $('#unit-description').val();
@@ -194,13 +202,11 @@ $('#post-form').on('submit', function(event) {
     }
 
     form.append('dateTime', date);
-    console.log(form);
-    console.log(allFiles);
-    console.log(allFiles.length);
+
     //var data = {name: name, price: price, email: email, description: description, university: university, furnitureImage: image, dateTime: date, author: "Me"};
     $.ajax({
         type: 'POST',
-        url: 'http://localhost:8080/sublet',
+        url: '/sublet',
         processData: false,
         contentType: false,
         data: form,
@@ -239,7 +245,7 @@ $('.interested-form').on('submit', function(event) {
     var currElement = $(this);
     $.ajax({
         type: 'POST',
-        url: 'http://localhost:8080/email-sublet',
+        url: '/email-sublet',
         data: data,
         success: function(res) {
             if (res === "Successful") {
@@ -328,7 +334,7 @@ function reportSublet(id, beds, baths, start, end, university) {
     var data = {publicID: id, beds: beds, baths: baths, startDate: start, endDate: end, university: university};
     $.ajax({
         type: 'POST',
-        url: 'http://localhost:8080/sublet/report',
+        url: '/sublet/report',
         data: data,
         success: function(res) {
             if (res === "Successful") {
@@ -354,4 +360,13 @@ function clearLocalStorage() {
             }
         }
     }
+}
+
+function validDates(start, end) {
+    var regExp = /(\d{1,2})\/(\d{1,2})\/(\d{2,4})/;
+
+    if(parseInt(end.replace(regExp, "$3$1$2")) > parseInt(start.replace(regExp, "$3$1$2"))){
+        return true;
+    }
+    else return false;
 }

@@ -1,6 +1,6 @@
 var beds = tail.select(".bedrooms",{
 
-  width: '200px',
+  width: '165px',
 
   // custom placeholder
   placeholder: "Bedrooms",
@@ -78,7 +78,7 @@ var beds = tail.select(".bedrooms",{
 });
 
 var baths = tail.select(".bathrooms",{
-  width: '200px',
+  width: '165px',
   placeholder: "Bathrooms",
   deselect: true,
   animate: true,
@@ -133,65 +133,90 @@ var apartments = tail.select(".apartments",{
 
 var searches = document.getElementsByClassName('search-input');
 for (let i = 0; i < searches.length; ++i) {
-  searches[i].setAttribute('placeholder', 'Search here...');
+  searches[i].setAttribute('placeholder', 'Search');
 }
 
-var currChecked = [];
-$('.dropdown-menu a').on('click', function(event) {
-   
-   var $target = $(event.currentTarget),
-       val = $target.attr('data-value'),
-       $inp = $target.find('input'),
-       idx;
 
-   if ((idx = currChecked.indexOf(val)) > -1) {
-      currChecked.splice(idx, 1);
-      setTimeout(function() {$inp.prop('checked', false)}, 0);
-   } else {
-      currChecked.push(val);
-      setTimeout(function() {$inp.prop('checked', true)}, 0);
-   }
-   $(event.target).blur();
-   return false;
-});
+// function displayPrice() {
+//   if ($('.menu-3').css('display') === 'none'){
+//     $('.menu-3').css('display', 'inline');
+//   }
+//   else {
+//     $('.menu-3').css('display', 'none');
+// }
+// }
+
+$( function() {
+  $( "#slider-range-price" ).slider({
+    range: true,
+    min: 0,
+    max: 2500,
+    values: [ 0, 2500 ],
+    animate: 'fast',
+    slide: function( event, ui ) {
+      $( "#amount-price" ).val( "$" + ui.values[ 0 ] + " - $" + ui.values[ 1 ] );
+    }
+  });
+  $( "#amount-price" ).val( "$" + $( "#slider-range-price" ).slider( "values", 0 ) +
+    " - $" + $( "#slider-range-price" ).slider( "values", 1 ) );
+} );
+
+$( function() {
+  $( "#slider-range-size" ).slider({
+    range: true,
+    min: 0,
+    max: 2500,
+    values: [ 0, 2500 ],
+    animate: 'fast',
+    slide: function( event, ui ) {
+      $( "#amount-size" ).val( ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+    }
+  });
+  $( "#amount-size" ).val($( "#slider-range-size" ).slider( "values", 0 ) +
+    " - " + $( "#slider-range-size" ).slider( "values", 1 ) );
+} );
 
 
-function displayPrice() {
-  if ($('.menu-3').css('display') === 'none'){
-    $('.menu-3').css('display', 'flex');
-  }
-  else {
-    $('.menu-3').css('display', 'none');
-}
-}
-
-$('.min-price').on('click', function(event) {
-  var chosen = $(event.currentTarget).text();
-  chosen = parseInt(chosen.substring(1, chosen.indexOf("+")));
-  document.getElementById('min-value').setAttribute('value', "$" + chosen);
-
-  var maxPrices = document.getElementsByClassName("max-price");
-  for (let i = 0; i < maxPrices.length; ++i) {
-    chosen += 200;
-    maxPrices[i].innerHTML = "$" + chosen;
-  }
-});
-
-$('.max-price').on('click', function(event) {
-  var chosen = $(event.currentTarget).text();
-  chosen = parseInt(chosen.substring(1));
-  document.getElementById('max-value').setAttribute('value', "$" + chosen);
-  if (document.getElementById('min-value').getAttribute('value') !== '')
-    return;
+$('.price-size-menu').on('click', function(event) {
+  event.stopPropagation();
 })
 
+
+// $('.min-price').on('click', function(event) {
+//   var chosen = $(event.currentTarget).text();
+//   chosen = parseInt(chosen.substring(1, chosen.indexOf("+")));
+//   document.getElementById('min-value').setAttribute('value', "$" + chosen);
+
+//   var maxPrices = document.getElementsByClassName("max-price");
+//   for (let i = 0; i < maxPrices.length; ++i) {
+//     chosen += 200;
+//     maxPrices[i].innerHTML = "$" + chosen;
+//   }
+// });
+
+// $('.max-price').on('click', function(event) {
+//   var chosen = $(event.currentTarget).text();
+//   chosen = parseInt(chosen.substring(1));
+//   document.getElementById('max-value').setAttribute('value', "$" + chosen);
+//   if (document.getElementById('min-value').getAttribute('value') !== '')
+//     return;
+// })
+
 function getData() {
+
   var bedrooms = beds.select.getElementsByClassName('selected');
   var bathrooms = baths.select.getElementsByClassName('selected');
-  var prices = [];
-  var sizes = [];
+  var prices = $("#slider-range-price").slider("option", "values");
+  var sizes = $("#slider-range-size").slider("option", "values");
   var names = apartments.select.getElementsByClassName('selected');
 
+  if (prices[0] == $("#slider-range-price").slider("option", "min") && prices[1] == $("#slider-range-price").slider("option", "max")) {
+    prices = [];
+  }
+
+  if (sizes[0] == $("#slider-range-size").slider("option", "min") && sizes[1] && $("#slider-range-size").slider("option", "max")) {
+    sizes = [];
+  }
 //   $("input:checkbox[name=beds]:checked").each(function(){
 //     beds.push($(this).parent().text().trim());
 // });
@@ -232,7 +257,7 @@ function assembleURL(bedrooms, bathrooms, prices, sizes, names) {
   var sizeData = "";
   var nameData = "";
   var atLeastOne = false;
-  var url = "http://localhost:8080/search";
+  var url = "/search";
 
   for (let i = 0; i < bedrooms.length; ++i) {
     var temp = bedrooms[i].dataset.key;
