@@ -22,11 +22,25 @@ window.onload = function() {
 
 function handleRender(data) {
     var div = document.getElementsByClassName('card-deck')[0];
+
     if (!data || data.length === 0) {
-        var disclaimer = document.createElement('p');
-        disclaimer.setAttribute('class', 'disclaimer');
-        disclaimer.innerHTML = "You currently have no favorites added.";
-        div.appendChild(disclaimer);
+        var container = document.createElement('div');
+        container.setAttribute('class', 'container');
+        var colMd = document.createElement('div');
+        var colMd2 = document.createElement('div');
+        colMd.setAttribute('class', 'col-md-auto');
+        colMd2.setAttribute('class', 'col-md-auto');
+        var img = document.createElement('img');
+        img.setAttribute('src', 'images/nofavorites.png');
+        img.setAttribute('class', 'nofavorites');
+        var disclaimer = document.createElement('text');
+        disclaimer.setAttribute('class', 'disclaimer-fav');
+        disclaimer.innerHTML = `You currently have no favorites. When you <a href="/search"><strong>add a favorite</strong></a>, it will appear on this page.`;
+        colMd.appendChild(img);
+        colMd2.appendChild(disclaimer);
+        container.appendChild(colMd);
+        container.appendChild(colMd2);
+        div.appendChild(container);
         return;
     }
 
@@ -59,18 +73,24 @@ function handleRender(data) {
           toastr.info("Thank you for reporting this listing as inaccurate. We will take a look into it!");
           var url = '/search/report';
           var data = {name: $(this).attr('name'), apt: $(this).attr('apt'), beds: $(this).attr('beds'), baths: $(this).attr('baths')};
-  
+          var succeeded = true;
           $.ajax({
             url: url,
             type: 'POST',
             data: data,
             success: function(res) {
             }
+        }).fail(function() {
+            toastr.error("Something went wrong. Please refresh the page and try again.");
+            succeeded = false;
         });
         }
        
-        $(this).attr('class', 'flag fa fa-flag');
-        $(this).css('color', 'red');
+        if (succeeded) {
+            $(this).attr('class', 'flag fa fa-flag');
+            $(this).css('color', 'red');
+        }
+
         });
 }
 

@@ -136,16 +136,6 @@ for (let i = 0; i < searches.length; ++i) {
   searches[i].setAttribute('placeholder', 'Search');
 }
 
-
-// function displayPrice() {
-//   if ($('.menu-3').css('display') === 'none'){
-//     $('.menu-3').css('display', 'inline');
-//   }
-//   else {
-//     $('.menu-3').css('display', 'none');
-// }
-// }
-
 $( function() {
   $( "#slider-range-price" ).slider({
     range: true,
@@ -179,28 +169,7 @@ $( function() {
 
 $('.price-size-menu').on('click', function(event) {
   event.stopPropagation();
-})
-
-
-// $('.min-price').on('click', function(event) {
-//   var chosen = $(event.currentTarget).text();
-//   chosen = parseInt(chosen.substring(1, chosen.indexOf("+")));
-//   document.getElementById('min-value').setAttribute('value', "$" + chosen);
-
-//   var maxPrices = document.getElementsByClassName("max-price");
-//   for (let i = 0; i < maxPrices.length; ++i) {
-//     chosen += 200;
-//     maxPrices[i].innerHTML = "$" + chosen;
-//   }
-// });
-
-// $('.max-price').on('click', function(event) {
-//   var chosen = $(event.currentTarget).text();
-//   chosen = parseInt(chosen.substring(1));
-//   document.getElementById('max-value').setAttribute('value', "$" + chosen);
-//   if (document.getElementById('min-value').getAttribute('value') !== '')
-//     return;
-// })
+});
 
 function getData() {
 
@@ -217,28 +186,8 @@ function getData() {
   if (sizes[0] == $("#slider-range-size").slider("option", "min") && sizes[1] && $("#slider-range-size").slider("option", "max")) {
     sizes = [];
   }
-//   $("input:checkbox[name=beds]:checked").each(function(){
-//     beds.push($(this).parent().text().trim());
-// });
-
-// $("input:checkbox[name=baths]:checked").each(function(){
-//     baths.push($(this).parent().text().trim());
-// });
-
-// $("input:checkbox[name=prices]:checked").each(function(){
-//     prices.push($(this).parent().text().trim());
-// });
-
-// $("input:checkbox[name=sizes]:checked").each(function(){
-//     sizes.push($(this).parent().text().trim());
-// });
-
-// $("input:checkbox[name=names]:checked").each(function(){
-//     names.push($(this).parent().text().trim());
-// });
 
 var url = assembleURL(bedrooms, bathrooms, prices, sizes, names);
-console.log(url);
   $.ajax({
     url: url,
     type: 'GET',

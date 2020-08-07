@@ -4,7 +4,7 @@ var bodyParser = require('body-parser');
 require('dotenv').config();
 var fs = require('fs');
 const app = express();
-const port = 8080;
+const port = process.env.port || 8080;
 var ejs = require('ejs');
 var cors = require('cors');
 var multer = require('multer');
@@ -109,12 +109,6 @@ app.get('/search', (req, res) => {
     });
 });
 
-// app.use(function(e, req, res, next) {
-//     if (e.message === "Bad request") {
-//         res.status(400).json({error: {msg: e.message, stack: e.stack}});
-//     }
-// });
-
 
 app.get('/search/favorites', (req, res) => {
     if (!req.query.data){
@@ -173,12 +167,12 @@ app.post('/furniture', upload.single('furnitureImage'), (req, res) => {
     var query = `
 SET @recentUUID = UUID(); \
 START TRANSACTION; \
-INSERT INTO furniture_data(ProductName, ProductPrice, ProductDescription, Author, University, Date, Email, Image, PublicID, PrivateID) \
-VALUES(?, ?, ?, ?, ?, ?, ?, ?, @recentUUID, CONCAT('${private}', @recentUUID)); \
+INSERT INTO furniture_data(ProductName, ProductPrice, ProductDescription, University, Date, Email, Image, PublicID, PrivateID) \
+VALUES(?, ?, ?, ?, ?, ?, ?, @recentUUID, CONCAT('${private}', @recentUUID)); \
 SELECT * FROM furniture_data WHERE PublicID=@recentUUID; \
 COMMIT;`;
     var recUUID;
-    var arr = [req.body.name, req.body.price, req.body.description, req.body.author, req.body.university, 
+    var arr = [req.body.name, req.body.price, req.body.description, req.body.university, 
         req.body.dateTime, req.body.email, file];
     pool.getConnection(function(err, connection) {
         if (err) throw err;
@@ -192,7 +186,7 @@ COMMIT;`;
 
             recUUID = recUUID[0];
             var html = createFurnitureEmail(req.body.name, req.body.price, req.body.description, req.body.university,
-            `www.leazy.org/furniture/posts/delete/${recUUID.PublicID}/${recUUID.PrivateID}`);
+            `www.leazy.org/furniture/posts/delete/${recUUID.PublicID}/${recUUID.PrivateID}`, `www.leazy.org/furniture/posts/${recUUID.PublicID}`);
             var mailOptions = {
                 from: process.env.USER_EMAIL,
                 to: req.body.email,
@@ -254,9 +248,14 @@ app.post('/email-furniture', (req, res) => {
     pool.getConnection(function(err, connection) {
         if (err) throw err;
         connection.query(query, id, function (err, result, fields) {
-            if (err) throw err;
+            if (err) {
+                res.send('Unsuccessful');
+                connection.release();
+                return;
+            }
             deletionLink = `www.leazy.org/furniture/posts/delete/${result[0].PublicID}/${result[0].PrivateID}`;
-            var html = createFurnitureReply(req.body.name, req.body.university, req.body.description, req.body.email, deletionLink);
+            var viewLink = `www.leazy.org/furniture/posts/${result[0].PublicID}`;
+            var html = createFurnitureReply(req.body.name, req.body.university, req.body.description, req.body.email, deletionLink, viewLink);
             var mailOptions = {
                 from: process.env.USER_EMAIL,
                 to: result[0].Email,
@@ -275,7 +274,9 @@ app.post('/email-furniture', (req, res) => {
         });
         var updateInterested = "UPDATE furniture_data SET NumInterested = NumInterested + 1 WHERE PublicID=?";
         connection.query(updateInterested, id, function (err, result, fields) {
-            if (err) throw err;
+            if (err) {
+                console.log(err);
+            }
             connection.release();
         });
     });
@@ -325,7 +326,11 @@ app.post('/furniture/posts/delete/:publicId/:privateId', (req, res) => {
     pool.getConnection(function(err, connection) {
         if (err) throw err;
         connection.query(queryFindImage, arr, function(err, result, fields) {
-            if (err) throw err;
+            if (err) {
+                res.status(400).send('Unsuccessful');
+                connection.release();
+                return;
+            }
             if (result.affectedRows === 0) {
                 img = null;
             }
@@ -333,9 +338,15 @@ app.post('/furniture/posts/delete/:publicId/:privateId', (req, res) => {
         });
 
         connection.query(query, arr, function(err, result, fields) {
-            if (err) throw err;
+            if (err) {
+                res.status(400).send("Unsuccessful");
+                connection.release();
+                return;
+            }
             if (result.affectedRows === 0) {
                 res.status(404).send("<h1>The post you requested does not exist. </h1>");
+                connection.release();
+                return;
             }
             else {
                 if (img && img !== 'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcSADPzrYm_hQg2XMNc_9KTr9Axmn35s0DbsIQ&usqp=CAU') {
@@ -421,7 +432,8 @@ var recUUID;
             }
             recUUID = recUUID[0];
             var html = createSubletEmail(req.body.beds, req.body.baths, req.body.rent, req.body.complex, req.body.university, furnished, req.body.gender, `${req.body.startDate} - ${req.body.endDate}`,
-            req.body.duration, req.body.description, `www.leazy.org/sublet/posts/delete/${recUUID.PublicID}/${recUUID.PrivateID}`);
+            req.body.duration, req.body.description, `www.leazy.org/sublet/posts/delete/${recUUID.PublicID}/${recUUID.PrivateID}`,
+            `www.leazy.org/sublet/posts/${recUUID.PublicID}`);
             var mailOptions = {
                 from: process.env.USER_EMAIL,
                 to: req.body.email,
@@ -469,7 +481,11 @@ app.get('/sublet/posts/:id', (req, res) => {
     pool.getConnection(function(err, connection) {
         if (err) throw err;
         connection.query(query, publicId, function (err, result, fields) {
-            if (err) throw err;
+            if (err) {
+                res.status(404).render('error404', {path: req.path});
+                connection.release();
+                return;
+            }
             res.render('sublet', {data: result, diff: timeDifference, path: req.path});
             connection.release();
         });
@@ -503,9 +519,14 @@ app.post('/email-sublet', (req, res) => {
     pool.getConnection(function(err, connection) {
         if (err) throw err;
         connection.query(query, id, function (err, result, fields) {
-            if (err) throw err;
+            if (err) {
+                res.send('Unsuccessful');
+                connection.release();
+                return;
+            }
             deletionLink = `www.leazy.org/sublet/posts/delete/${result[0].PublicID}/${result[0].PrivateID}`;
-            var html = createSubletReply(req.body.name, req.body.university, req.body.description, req.body.email, deletionLink);
+            var viewLink = `www.leazy.org/sublet/posts/${result[0].PublicID}`;
+            var html = createSubletReply(req.body.name, req.body.university, req.body.description, req.body.email, deletionLink, viewLink);
             var mailOptions = {
                 from: process.env.USER_EMAIL,
                 to: result[0].Email,
@@ -524,7 +545,9 @@ app.post('/email-sublet', (req, res) => {
     });
         var updateInterested = "UPDATE sublet_data SET NumInterested = NumInterested + 1 WHERE PublicID=?";
         connection.query(updateInterested, id, function (err, result, fields) {
-            if (err) throw err;
+            if (err) {
+                console.log(err);
+            }
             connection.release();
         });
     });
@@ -577,13 +600,21 @@ app.get('/sublet/posts/delete/:publicId/:privateId', (req, res) => {
 app.post('/sublet/posts/delete/:publicId/:privateId', (req, res) => {
     var queryFindImage = `SELECT (SELECT GROUP_CONCAT(sublet_images.ImageName) FROM sublet_images WHERE sublet_images.PublicID = sublet_data.PublicID) AS allImages FROM sublet_data \
     WHERE sublet_data.PublicID=? AND PrivateID=?`;
-    var query = `DELETE FROM sublet_data WHERE PublicID=? AND PrivateID=?`;
-    var arr = [req.params.publicId, req.params.privateId];
+    var query = `
+    START TRANSACTION; \
+    DELETE FROM sublet_data WHERE PublicID=? AND PrivateID=?; \
+    DELETE FROM sublet_images WHERE PublicID=?; \
+    COMMIT;`;
+    var arr = [req.params.publicId, req.params.privateId, req.params.publicId];
     var img;
     pool.getConnection(function(err, connection) {
         if (err) throw err;
         connection.query(queryFindImage, arr, function(err, result, fields) {
-            if (err) throw err;
+            if (err) {
+                res.status(400).send('Unsuccessful');
+                connection.release();
+                return;
+            }
             if (result.affectedRows === 0) {
                 img = null;
             }
@@ -591,7 +622,11 @@ app.post('/sublet/posts/delete/:publicId/:privateId', (req, res) => {
         });
 
         connection.query(query, arr, function(err, result, fields) {
-            if (err) throw err;
+            if (err) {
+                res.status(400).send("Unsuccessful");
+                connection.release();
+                return;
+            }
             if (result.affectedRows === 0) {
                 res.status(404).send("<h1>The post you requested does not exist. </h1>");
             }
@@ -622,7 +657,7 @@ app.post('/sublet/posts/delete/:publicId/:privateId', (req, res) => {
 app.get('/privacy', (req, res) => {
     res.render('privacy');
 })
-function createSubletEmail(beds, baths, price, apartment, university, furnished, gender, term, duration, description, deletionLink) {
+function createSubletEmail(beds, baths, price, apartment, university, furnished, gender, term, duration, description, deletionLink, viewLink) {
     var html = `
     <!DOCTYPE html>
     <html lang="en-US">
@@ -643,7 +678,15 @@ function createSubletEmail(beds, baths, price, apartment, university, furnished,
             </ul>
             <p>We will notify you whenever anyone who is interested in your post decides to contact you!</p>
             <text>If you want to delete this post permanently, please 
-                <a href="${deletionLink}">Click Here</a> 
+                <a href="${deletionLink}">Click Here</a>. 
+            </text>
+            <br>
+            <text>In order to view your post, please 
+                <a href="${viewLink}">Click Here</a>.
+            </text>
+            <br>
+            <text>
+                <strong>*****PLEASE DO NOT REPLY TO THIS EMAIL*****</strong>
             </text>
         </body>
     </html>`;
@@ -651,7 +694,7 @@ function createSubletEmail(beds, baths, price, apartment, university, furnished,
     return html;
 }
 
-function createSubletReply(name, university, message, email, deletionLink) {
+function createSubletReply(name, university, message, email, deletionLink, viewLink) {
     var html = `
     <!DOCTYPE html>
     <html lang="en-US">
@@ -661,7 +704,15 @@ function createSubletReply(name, university, message, email, deletionLink) {
             <p style="margin-left: 20px; white-space: pre-wrap"><em>${message}</em></p>
             <p>Contact this person back if you're interested in subletting to them: ${email}</p>
             <text>If you want to delete this post permanently, please 
-                <a href="${deletionLink}">Click Here</a> 
+                <a href="${deletionLink}">Click Here</a>.
+            </text>
+            <br>
+            <text>In order to view your post, please 
+                <a href="${viewLink}">Click Here</a>.
+            </text>
+            <br>
+            <text>
+                <strong>*****PLEASE DO NOT REPLY TO THIS EMAIL*****</strong>
             </text>
         </body>
     </html>`;
@@ -669,7 +720,7 @@ function createSubletReply(name, university, message, email, deletionLink) {
     return html;
 }
 
-function createFurnitureEmail(name, price, description, university, deletionLink) {
+function createFurnitureEmail(name, price, description, university, deletionLink, viewLink) {
 
     var html = `
     <!DOCTYPE html>
@@ -685,7 +736,15 @@ function createFurnitureEmail(name, price, description, university, deletionLink
             </ul>
             <p>We will notify you whenever anyone who is interested in your post decides to contact you!</p>
             <text>If you want to delete this post permanently, please 
-                <a href="${deletionLink}">Click Here</a> 
+                <a href="${deletionLink}">Click Here</a>.
+            </text>
+            <br>
+            <text>In order to view your post, please 
+                <a href="${viewLink}">Click Here</a>.
+            </text>
+            <br>
+            <text>
+                <strong>*****PLEASE DO NOT REPLY TO THIS EMAIL*****</strong>
             </text>
         </body>
     </html>`;
@@ -693,7 +752,7 @@ function createFurnitureEmail(name, price, description, university, deletionLink
     return html;
 }
 
-function createFurnitureReply(name, university, message, email, deletionLink) {
+function createFurnitureReply(name, university, message, email, deletionLink, viewLink) {
     var html = `
     <!DOCTYPE html>
     <html lang="en-US">
@@ -703,7 +762,15 @@ function createFurnitureReply(name, university, message, email, deletionLink) {
             <p style="margin-left: 20px; white-space: pre-wrap"><em>${message}</em></p>
             <p>Contact this person back if you're interested in selling to them: ${email}</p>
             <text>If you want to delete this post permanently, please 
-                <a href="${deletionLink}">Click Here</a> 
+                <a href="${deletionLink}">Click Here</a>. 
+            </text>
+            <br>
+            <text>In order to view your post, please 
+                <a href="${viewLink}">Click Here</a>.
+            </text>
+            <br>
+            <text>
+                <strong>*****PLEASE DO NOT REPLY TO THIS EMAIL*****</strong>
             </text>
         </body>
     </html>`;
@@ -825,7 +892,6 @@ function assembleQuery(beds, baths, prices, sizes, names) {
     }
 
     var query = "SELECT apartment_data.*, count(*) OVER() AS full_count, complex_data.* FROM apartment_data, complex_data WHERE (apartment_data.AptID=complex_data.ID) AND " + bed + bath + price + size + name;
-    //var query = "SELECT * FROM apartment_data WHERE " + bed + bath + price + size + name;
     return [query, arr];
 }
 

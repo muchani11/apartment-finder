@@ -56,29 +56,11 @@ html {
   .subheader {
     font-weight: lighter;
   }
-  /* .row{
-  box-shadow: 0 4px 12px 0 rgba(0,0,0,0.2);
-  transition: 0.3s;
-  border-radius: 5px;
-  } */
   
   .sublet-title {
     margin-top: 20px;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
   }
-  /* .dropdown {
-  margin: 0 auto;
-  display: flex;
-  position: relative;
-  top: -100px;
-  } */
-  
-  /* .container {
-  text-align: center;
-  position: relative;
-  display: flex;
-  top: 110px;
-  } */
   
   .container-display {
     text-align: center;
@@ -440,19 +422,6 @@ html {
   cursor: pointer;
   font-size: 20px;
 }
-
-/* .post-toolbar {
-  margin: 0 auto;
-  box-shadow: 0 4px 4px rgba(0,0,0,.25);
-  border-radius: 10px;
-  justify-content: space-between;
-  padding: 15px;
-  margin-bottom: 2%;
-  background-color: #fff;
-}
-.post-toolbar:hover {
-  box-shadow: 0 8px 40px 0 rgba(0,0,0,0.2);
-} */
 
 
 .form-row {

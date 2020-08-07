@@ -42,8 +42,7 @@ $('#post-form').on('submit', function(event) {
     form.append('university', university);
     form.append('furnitureImage', image);
     form.append('dateTime', date);
-    form.append('author', 'me');
-    //var data = {name: name, price: price, email: email, description: description, university: university, furnitureImage: image, dateTime: date, author: "Me"};
+
     $.ajax({
         type: 'POST',
         url: '/furniture',
@@ -59,6 +58,10 @@ $('#post-form').on('submit', function(event) {
             }
             
         }
+    }).fail(function() {
+        $('#confirm-furniture-post').removeAttr('disabled');
+        $('#confirm-furniture-post').html('Post Item');
+        toastr.error("Something went wrong. Please refresh the page and try again.");
     });
 });
 
@@ -80,7 +83,6 @@ $('.interested-form').on('submit', function(event) {
         description: description, university: university, dateTime: date, id: id};
 
     var currElement = $(this);
-    console.log(data);
     $.ajax({
         type: 'POST',
         url: '/email-furniture',
@@ -98,12 +100,16 @@ $('.interested-form').on('submit', function(event) {
             }
             
         }
+    }).fail(function() {
+        btn.removeAttr('disabled');
+        btn.html('Send Email');
+        toastr.error("Something went wrong. Please refresh the page and try again.");
     });
 });
 
 
 function sharePost(id) {
-    var url = "http://localhost:8080/furniture/posts/" + id;
+    var url = "http://leazy.org/furniture/posts/" + id;
     var el = document.createElement('textarea');
     el.value = url;
     document.body.appendChild(el);
@@ -160,6 +166,8 @@ function reportSublet(id, name, price, university) {
             }
             
         }
+    }).fail(function() {
+        toastr.error("Something went wrong. Please refresh the page and try again.");
     });
 }
 

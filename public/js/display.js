@@ -214,37 +214,8 @@ function getData() {
     if (sizes[0] == $("#slider-range-size").slider("option", "min") && sizes[1] && $("#slider-range-size").slider("option", "max")) {
       sizes = [];
     }
-
-
-  //   $("input:checkbox[name=beds]:checked").each(function(){
-  //     beds.push($(this).parent().text().trim());
-  // });
-  
-  // $("input:checkbox[name=baths]:checked").each(function(){
-  //     baths.push($(this).parent().text().trim());
-  // });
-  
-  // $("input:checkbox[name=prices]:checked").each(function(){
-  //     prices.push($(this).parent().text().trim());
-  // });
-  
-  // $("input:checkbox[name=sizes]:checked").each(function(){
-  //     sizes.push($(this).parent().text().trim());
-  // });
-  
-  // $("input:checkbox[name=names]:checked").each(function(){
-  //     names.push($(this).parent().text().trim());
-  // });
   
   var url = assembleURL(bedrooms, bathrooms, prices, sizes, names);
-  console.log(url);
-    $.ajax({
-      url: url,
-      type: 'GET',
-      dataType: 'json',
-      success: function(res) {
-      }
-  });
   
   window.location.href = url;
     }
@@ -393,18 +364,24 @@ function closeModal() {
         toastr.info("Thank you for reporting this listing as inaccurate. We will take a look into it!");
         var url = '/search/report';
         var data = {name: $(this).attr('name'), apt: $(this).attr('apt'), beds: $(this).attr('beds'), baths: $(this).attr('baths')};
-
+        var succeeded = true;
         $.ajax({
           url: url,
           type: 'POST',
           data: data,
           success: function(res) {
           }
+      }).fail(function() {
+        toastr.error("Something went wrong. Please refresh the page and try again.");
+        succeeded = false;
       });
       }
-     
-      $(this).attr('class', 'flag fa fa-flag');
-      $(this).css('color', 'red');
+      
+      if (succeeded) {
+        $(this).attr('class', 'flag fa fa-flag');
+        $(this).css('color', 'red');
+      }
+
       });
 
 function favoriteUnit(name, apartment) {

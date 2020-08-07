@@ -34,18 +34,6 @@ input.addEventListener("keyup", function(event) {
 
 clearLocalStorage();
 
-// var listFiles = document.getElementById('unit-image');
-// listFiles.addEventListener('change', (event) => {
-//     var location = document.getElementById("image-form");
-//     var br = document.createElement("br");
-//     location.appendChild(br);
-//     var input = document.createElement("input");
-//     input.type = "file";
-//     input.accept = "image/*";
-//     input.multiple = true;
-
-//     location.appendChild(input);
-//   });
 $.fn.fileUploader = function (filesToUpload, sectionIdentifier) {
     var fileIdCounter = 0;
 
@@ -107,34 +95,6 @@ $.fn.fileUploader = function (filesToUpload, sectionIdentifier) {
     var files1Uploader = $("#files1").fileUploader(filesToUpload, "files1");
     checkImages = filesToUpload;
     files1Uploader.clear();
-
-    // $("#uploadBtn").click(function (e) {
-    //     e.preventDefault();
-
-    //     var formData = new FormData();
-
-    //     for (var i = 0, len = filesToUpload.length; i < len; i++) {
-    //         formData.append("files", filesToUpload[i].file);
-    //     }
-
-    //     $.ajax({
-    //         url: "http://requestb.in/1k0dxvs1",
-    //         data: formData,
-    //         processData: false,
-    //         contentType: false,
-    //         type: "POST",
-    //         success: function (data) {
-    //             alert("DONE");
-
-    //             files1Uploader.clear();
-    //             files2Uploader.clear();
-    //             files3Uploader.clear();
-    //         },
-    //         error: function (data) {
-    //             alert("ERROR - " + data.responseText);
-    //         }
-    //     });
-    // });
 })()
 
 $('#post-form').on('submit', function(event) {
@@ -221,6 +181,10 @@ $('#post-form').on('submit', function(event) {
             }
             
         }
+    }).fail(function() {
+        $('#sublease-post').removeAttr('disabled');
+        $('#sublease-post').html('Post Unit');
+        toastr.error("Something went wrong. Please refresh the page and try again.");
     });
 });
 
@@ -261,13 +225,17 @@ $('.interested-form').on('submit', function(event) {
             }
             
         }
+    }).fail(function() {
+        btn.removeAttr('disabled');
+        btn.html('Send Email');
+        toastr.error("Something went wrong. Please refresh the page and try again.");
     });
 
 });
 
 
 function sharePost(id) {
-    var url = "http://localhost:8080/sublet/posts/" + id;
+    var url = "http://leazy.org/sublet/posts/" + id;
     var el = document.createElement('textarea');
     el.value = url;
     document.body.appendChild(el);
@@ -343,6 +311,8 @@ function reportSublet(id, beds, baths, start, end, university) {
             }
             
         }
+    }).fail(function() {
+        toastr.error('Something went wrong. Please refresh the page and try again.');
     });
 }
 

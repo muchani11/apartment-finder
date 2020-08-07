@@ -21,3 +21,6 @@ scraper/__pycache__
 
 # Ignore idea
 .idea
+
+#Ignore scraper
+scraper

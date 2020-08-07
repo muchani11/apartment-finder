@@ -339,6 +339,14 @@ font-size: 28px;
 color: red;
 }
 
+.nofavorites {
+  margin: 0 auto;
+}
+
+.disclaimer-fav {
+  font-size: 25px;
+  font-family: "Titillium";
+}
 #flag {
   position: absolute;
   top:0;
@@ -567,19 +575,6 @@ color: #154ca3;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* .donate-link {
-  padding: 0px;
-}
-
-.donate {
-  width: 100%;
-  font-size: 1.1rem;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-.donate:hover {
-  color: white !important;
-} */
-
 .donate {
   padding: 7px 10px!important;
   text-align: center;
@@ -602,3 +597,4 @@ color: #154ca3;
   background-color: slategray !important;
   color: white !important;
 }
+
