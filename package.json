@@ -16,7 +16,7 @@
     "url": "https://github.com/muchani11/apartment-finder/issues"
   },
   "engines": {
-    "node": "v12.13.0"
+    "node": "12.13.0"
   },
   "homepage": "https://github.com/muchani11/apartment-finder#readme",
   "dependencies": {
