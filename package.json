@@ -1,7 +1,7 @@
 {
   "name": "apartment-finder",
   "version": "1.0.0",
-  "description": "",
+  "description": "Apartment Finder",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -10,12 +10,14 @@
     "type": "git",
     "url": "git+https://github.com/muchani11/apartment-finder.git"
   },
-  "author": "",
+  "author": "Madhavan Uchani",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/muchani11/apartment-finder/issues"
   },
-  "engines" : { "node" : ">=0.12" },
+  "engines": {
+    "node": "v12.13.0"
+  },
   "homepage": "https://github.com/muchani11/apartment-finder#readme",
   "dependencies": {
     "body-parser": "^1.19.0",
@@ -33,5 +35,6 @@
     "paginate": "^0.2.0",
     "pug": "^3.0.0",
     "tail.select": "^0.5.15"
-  }
+  },
+  "devDependencies": {}
 }
