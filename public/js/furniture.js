@@ -109,7 +109,7 @@ $('.interested-form').on('submit', function(event) {
 
 
 function sharePost(id) {
-    var url = "http://leazy.org/furniture/posts/" + id;
+    var url = "leazy.org/furniture/posts/" + id;
     var el = document.createElement('textarea');
     el.value = url;
     document.body.appendChild(el);

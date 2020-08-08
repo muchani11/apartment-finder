@@ -235,7 +235,7 @@ $('.interested-form').on('submit', function(event) {
 
 
 function sharePost(id) {
-    var url = "http://leazy.org/sublet/posts/" + id;
+    var url = "leazy.org/sublet/posts/" + id;
     var el = document.createElement('textarea');
     el.value = url;
     document.body.appendChild(el);
