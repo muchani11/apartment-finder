@@ -10,6 +10,9 @@ scraper/login.py
 # Ignore pycache
 scraper/__pycache__
 
+# Ignore uploads
+public/uploads
+
 # Ignore idea
 .idea
 
