@@ -29,7 +29,7 @@ $('#post-form').on('submit', function(event) {
     var name = $('#furniture-title').val();
     var price = $('#furniture-price').val();
     var email = $('#author-email').val();
-    var description = $('#furniture-description').val();
+    var description = $('#furniture-description').val().trim();
     var university = $('#university').val();
     var image = document.getElementById('furniture-image').files[0];
     var form = new FormData();

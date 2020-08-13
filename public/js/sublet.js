@@ -1,4 +1,5 @@
 var checkImages = [];
+
 $(document).ready(function(){
     $('[data-toggle="tooltip"]').tooltip();
   });
@@ -8,7 +9,7 @@ if (sessionStorage.getItem('userJustPosted') === 'true') {
   toastr.success('Your unit has been posted and a confirmation email has been sent to your inbox! We will notify you when a user is interested in your post.');
   sessionStorage.removeItem('userJustPosted');
 }
-  
+
 
 var input = document.getElementsByClassName('searchTerm')[0];
 
@@ -134,7 +135,7 @@ $('#post-form').on('submit', function(event) {
 
     var gender = $('#unit-gender option:selected').text();
     var email = $('#unit-email').val();
-    var description = $('#unit-description').val();
+    var description = $('#unit-description').val().trim();
     var university = $('#unit-university').val();
     var allFiles = checkImages;
 

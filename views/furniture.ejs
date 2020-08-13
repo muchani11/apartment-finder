@@ -178,7 +178,7 @@
                               <b><%= data[i].University %></b>
                             </a>
                           </p>
-                        <p class="card-text"><%= data[i].ProductDescription %></p>
+                        <p class="card-text furniture-description"><%= data[i].ProductDescription %></p>
                         <hr>
                     </div>
                     <div class="card-footer-bottom">
@@ -298,7 +298,7 @@
                     <form id="post-form">
                         <div class="form-group">
                             <label for="furniture-title">Furniture Name</label>
-                            <input type="text" class="form-control" id="furniture-title" placeholder="Enter name" required>
+                            <input type="text" class="form-control" id="furniture-title" placeholder="Enter name" maxlength="100" required>
                         </div>
 
                         <div class="form-group">
@@ -314,13 +314,13 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="furniture-description">Optional Product Description (1000 characters)</label>
-                            <textarea class="form-control" id="furniture-description" rows="3" maxlength=1000></textarea>
+                            <label for="furniture-description">Optional Product Description (max 2000 characters)</label>
+                            <textarea class="form-control furniture-description" id="furniture-description" rows="4" maxlength=2000></textarea>
                           </div>
 
                         <div class="form-group">
                           <label for="university">University You Attend</label>
-                          <input type="text" class="form-control" id="university" placeholder="i.e., 'UT Austin'" required>
+                          <input type="text" class="form-control" id="university" placeholder="i.e., 'UT Austin'" maxlength="100" required>
                         </div>
 
                         <div class="form-group">

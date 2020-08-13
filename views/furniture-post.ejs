@@ -98,7 +98,7 @@
             <% } %>
             <% for(var i = 0; i < data.length; ++i) { %>
             <% var difference = diff(Date.now(), data[i].Date); %>
-            <div class="card mb-3" style="width: 840px; max-height: 1200px;">
+            <div class="card mb-3 col">
                 <div class="row no-gutters">
                 <div class="col-md-4">
                     <img src="<%= data[i].Image %>" class="card-img" onclick="displayFull('<%= data[i].Image %>', '<%= data[i].ProductName %>')" title="Click to enlarge">
@@ -122,7 +122,7 @@
                             <% } %>
                             <img src="/images/location.png" style="width: 20px; height: 20px;">
                             <b><%= data[i].University %></b></p>
-                        <p class="card-text"><%= data[i].ProductDescription %></p>
+                        <p class="card-text furniture-description"><%= data[i].ProductDescription %></p>
                         <hr>
                     </div>
                     <div class="card-footer-bottom">
@@ -173,7 +173,7 @@
     
                             <div class="form-group">
                                 <label for="interested-description">Email Text</label>
-                                <textarea class="form-control" id="interested-description" rows="5" ></textarea>
+                                <textarea class="form-control interested-description" id="interested-description" rows="5" ></textarea>
                               </div>
     
                             <div class="form-group">

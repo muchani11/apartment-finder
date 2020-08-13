@@ -263,7 +263,7 @@
                           <text> Sublease Term</text>
                         </a>
                       </p>
-                    <p class="card-text"><%= data[i].UnitDescription %></p>
+                    <p class="card-text unit-description"><%= data[i].UnitDescription %></p>
                     <hr>
                 </div>
                 <div class="card-footer-bottom">
@@ -388,11 +388,11 @@
                     <div class="form-row">
                       <div class="col">
                         <label for="unit-complex-title">Apt. Complex Name</label>
-                        <input type="text" class="form-control" id="unit-complex-title" placeholder="Enter apartment" required>
+                        <input type="text" class="form-control" id="unit-complex-title" placeholder="Enter apartment" maxlength="100" required>
                       </div>
                       <div class="col">
                         <label for="unit-website">Apt. Website (optional)</label>
-                        <input type="text" class="form-control" id="unit-website" placeholder="Enter website">
+                        <input type="text" class="form-control" id="unit-website" placeholder="Enter website" maxlength="500">
                       </div>
                     </div>
 
@@ -450,13 +450,13 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="unit-description">Optional Unit Description (max 1000 characters)</label>
-                        <textarea class="form-control" id="unit-description" rows="3" maxlength=1000></textarea>
+                        <label for="unit-description">Optional Unit Description (max 2000 characters)</label>
+                        <textarea class="form-control unit-description" id="unit-description" rows="4" maxlength=2000></textarea>
                       </div>
 
                     <div class="form-group">
                       <label for="unit-university">University You Attend</label>
-                      <input type="text" class="form-control" id="unit-university" placeholder="i.e., 'UT Austin'" required>
+                      <input type="text" class="form-control" id="unit-university" placeholder="i.e., 'UT Austin'" maxlength="100" required>
                     </div>
 
                     <div class="form-group files" id="files1">

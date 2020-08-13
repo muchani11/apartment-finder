@@ -436,7 +436,7 @@ html {
   cursor: pointer;
 }
 
-.interested-description {
+.interested-description, .unit-description, .furniture-description {
   white-space: pre-wrap;
 }
 .imageThumb {
