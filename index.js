@@ -186,7 +186,7 @@ COMMIT;`;
 
             recUUID = recUUID[0];
             var html = createFurnitureEmail(req.body.name, req.body.price, req.body.description, req.body.university,
-            `www.leazy.org/furniture/posts/delete/${recUUID.PublicID}/${recUUID.PrivateID}`, `www.leazy.org/furniture/posts/${recUUID.PublicID}`);
+            `http://www.leazy.org/furniture/posts/delete/${recUUID.PublicID}/${recUUID.PrivateID}`, `http://www.leazy.org/furniture/posts/${recUUID.PublicID}`);
             var mailOptions = {
                 from: process.env.USER_EMAIL,
                 to: req.body.email,
@@ -253,8 +253,8 @@ app.post('/email-furniture', (req, res) => {
                 connection.release();
                 return;
             }
-            deletionLink = `www.leazy.org/furniture/posts/delete/${result[0].PublicID}/${result[0].PrivateID}`;
-            var viewLink = `www.leazy.org/furniture/posts/${result[0].PublicID}`;
+            deletionLink = `http://www.leazy.org/furniture/posts/delete/${result[0].PublicID}/${result[0].PrivateID}`;
+            var viewLink = `http://www.leazy.org/furniture/posts/${result[0].PublicID}`;
             var html = createFurnitureReply(req.body.name, req.body.university, req.body.description, req.body.email, deletionLink, viewLink);
             var mailOptions = {
                 from: process.env.USER_EMAIL,
@@ -432,8 +432,8 @@ var recUUID;
             }
             recUUID = recUUID[0];
             var html = createSubletEmail(req.body.beds, req.body.baths, req.body.rent, req.body.complex, req.body.university, furnished, req.body.gender, `${req.body.startDate} - ${req.body.endDate}`,
-            req.body.duration, req.body.description, `www.leazy.org/sublet/posts/delete/${recUUID.PublicID}/${recUUID.PrivateID}`,
-            `www.leazy.org/sublet/posts/${recUUID.PublicID}`);
+            req.body.duration, req.body.description, `http://www.leazy.org/sublet/posts/delete/${recUUID.PublicID}/${recUUID.PrivateID}`,
+            `http://www.leazy.org/sublet/posts/${recUUID.PublicID}`);
             var mailOptions = {
                 from: process.env.USER_EMAIL,
                 to: req.body.email,
@@ -524,8 +524,8 @@ app.post('/email-sublet', (req, res) => {
                 connection.release();
                 return;
             }
-            deletionLink = `www.leazy.org/sublet/posts/delete/${result[0].PublicID}/${result[0].PrivateID}`;
-            var viewLink = `www.leazy.org/sublet/posts/${result[0].PublicID}`;
+            deletionLink = `http://www.leazy.org/sublet/posts/delete/${result[0].PublicID}/${result[0].PrivateID}`;
+            var viewLink = `http://www.leazy.org/sublet/posts/${result[0].PublicID}`;
             var html = createSubletReply(req.body.name, req.body.university, req.body.description, req.body.email, deletionLink, viewLink);
             var mailOptions = {
                 from: process.env.USER_EMAIL,
