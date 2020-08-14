@@ -10,18 +10,31 @@ var cors = require('cors');
 var multer = require('multer');
 var nodemailer = require('nodemailer');
 var helmet = require('helmet');
+const AWS = require('aws-sdk');
+var multerS3 = require('multer-s3');
 
+const s3 = new AWS.S3({
+    accessKeyId: process.env.AWS_ACCESS_KEY,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    region: 'us-east-1'
+  });
 
-const storage = multer.diskStorage({
-    destination: function(req, file, cb) {
-        cb(null, 'public/uploads/');
-    },
-    filename: function(req, file, cb) {
-        cb(null, new Date().toISOString() + file.originalname.replace(',',''));
-    }
-});
+  const upload = multer({
+    storage: multerS3({
+      s3: s3,
+      acl: 'public-read',
+      bucket: process.env.BUCKET_NAME,
+      metadata: function (req, file, cb) {
+        cb(null, {fieldName: file.fieldname});
+      },
+      key: function (req, file, cb) {
+          var fileName = new Date().toISOString() + file.originalname.replace(',','');
+          var folder = 'uploads/';
+        cb(null, folder + fileName);
+      }
+    })
+  })
 
-const upload = multer({storage: storage});
 
 var pool = mysql.createPool({
     host: process.env.DB_HOST,
@@ -156,8 +169,8 @@ app.post('/search/report', (req, res) => {
 })
 app.post('/furniture', upload.single('furnitureImage'), (req, res) => {
     var file;
-    if (req.file && req.file.path) {
-        file = req.file.path.substring(req.file.path.indexOf('public')+6);
+    if (req.file) {
+        file = req.file.location;
     }
     else {
         file = 'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcSADPzrYm_hQg2XMNc_9KTr9Axmn35s0DbsIQ&usqp=CAU';
@@ -177,7 +190,11 @@ COMMIT;`;
     pool.getConnection(function(err, connection) {
         if (err) throw err;
         connection.query(query, arr, function (err, result, fields) {
-            if (err) console.log(err);
+            if (err) {
+                res.send('Failed');
+                connection.release();
+                return;
+            }
             
             recUUID = result[result.length - 2];
 
@@ -350,7 +367,14 @@ app.post('/furniture/posts/delete/:publicId/:privateId', (req, res) => {
             }
             else {
                 if (img && img !== 'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcSADPzrYm_hQg2XMNc_9KTr9Axmn35s0DbsIQ&usqp=CAU') {
-                    fs.unlink('public' + img, (err) => {
+                    img = img.substring(img.indexOf("uploads")); 
+                    img = decodeURIComponent(img);
+                    
+                    s3.deleteObject({
+                        Bucket: process.env.BUCKET_NAME,
+                        Key: img,
+                    }, function(err, data) {
+                        console.log(data);
                         if (err) {
                             console.log("failed to delete local image:"+err);
                         } 
@@ -393,13 +417,15 @@ app.post('/furniture/report', (req, res) => {
 });
 
 app.post('/sublet', upload.array('unitImages', 6), (req, res) => {
+    console.log(process.env.BUCKET_NAME);
     var files = [];
+    console.log(req.files.length);
     if (!(req.files && req.files.length > 0)){
         files = ['https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcSADPzrYm_hQg2XMNc_9KTr9Axmn35s0DbsIQ&usqp=CAU'];
     }
     for (let i = 0; i < req.files.length; ++i) {
-        if (req.files[i] && req.files[i].path){
-            files.push(req.files[i].path.substring(req.files[i].path.indexOf('public')+6));
+        if (req.files[i]){
+            files.push(req.files[i].location);
         }
     }
 
@@ -420,7 +446,11 @@ var recUUID;
     pool.getConnection(function(err, connection) {
         if (err) throw err;
         connection.query(query, arr, function (err, result, fields) {
-            if (err) console.log(err);
+            if (err) {
+                res.send('Failed');
+                connection.release();
+                return;
+            }
             recUUID = result[result.length - 2];
 
             res.send("Successful");
@@ -634,12 +664,19 @@ app.post('/sublet/posts/delete/:publicId/:privateId', (req, res) => {
                 if (img && img !== 'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcSADPzrYm_hQg2XMNc_9KTr9Axmn35s0DbsIQ&usqp=CAU') {
                     img = img.split(',');
                     for (let i = 0; i < img.length; ++i) {
-                        fs.unlink('public' + img[i], (err) => {
+                        var relImg = img[i].substring(img[i].indexOf("uploads")); 
+                        relImg = decodeURIComponent(relImg);
+                        
+                        s3.deleteObject({
+                            Bucket: process.env.BUCKET_NAME,
+                            Key: relImg,
+                        }, function(err, data) {
+                            console.log(data);
                             if (err) {
                                 console.log("failed to delete local image:"+err);
                             } 
                             else {
-                                console.log('successfully deleted local image');                                
+                                console.log('successfully deleted image ' + relImg);                                
                             }
                         });
                     }

@@ -180,6 +180,12 @@ $('#post-form').on('submit', function(event) {
                 window.location.href = "/sublet";
                 
             }
+
+            else {
+                $('#sublease-post').removeAttr('disabled');
+                $('#sublease-post').html('Post Unit');
+                toastr.error("Something went wrong. Please refresh the page and try again.");
+            }
             
         }
     }).fail(function() {

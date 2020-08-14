@@ -95,7 +95,7 @@
             <div class="message-deletion">
                 <h1 class="message-header"><i class="fa fa-warning"></i> Confirm Deletion</h1>
                 <p class="message-content">We found the following information for this post: </p>
-                <% if (data[0].Gender && data[0].UnitDescription) { %>
+                <% if ((data[0].Gender || data[0].UnitDescription) || path.indexOf('sublet') > -1) { %>
                     <ul class="message-content">
                         <li><b><u>Bedrooms:</b></u> <%=data[0].UnitBeds%></li>
                         <li><b><u>Bathrooms:</b></u> <%=data[0].UnitBaths%></li>

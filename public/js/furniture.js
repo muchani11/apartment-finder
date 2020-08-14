@@ -56,6 +56,11 @@ $('#post-form').on('submit', function(event) {
                 sessionStorage.setItem('userJustPosted', 'true');
                 window.location.href = "/furniture";
             }
+            else {
+                $('#confirm-furniture-post').removeAttr('disabled');
+                $('#confirm-furniture-post').html('Post Item');
+                toastr.error("Something went wrong. Please refresh the page and try again.");
+            }
             
         }
     }).fail(function() {
